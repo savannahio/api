@@ -1,0 +1,85 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Actions\Users;
+
+use App\Events\Users\UserRegisteredEvent;
+use App\Models\Support\Enum\PermissionEnum;
+use App\Models\Support\Enum\RoleEnum;
+use App\Models\Users\User;
+use Illuminate\Console\Command;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use JetBrains\PhpStorm\ArrayShape;
+use Lorisleiva\Actions\Concerns\AsAction;
+
+class CreateUser
+{
+    use AsAction;
+
+    public string $commandSignature = 'users:create {first_name} {last_name} {email} {password} ';
+    public string $commandDescription = 'Creates a User';
+
+    /**
+     * @param null|array<RoleEnum>       $roles
+     * @param null|array<PermissionEnum> $permissions
+     */
+    public function handle(string $first_name, string $last_name, string $email, string $password, ?array $roles = null, ?array $permissions = null): User
+    {
+        $user = new User();
+        $user->first_name = $first_name;
+        $user->last_name = $last_name;
+        $user->email = Str::lower($email);
+        $user->setPassword($password);
+        $user->save();
+
+        if (null !== $roles) {
+            $user->assignRole($roles);
+        }
+
+        if (null !== $permissions) {
+            $user->givePermissionTo($permissions);
+        }
+        event(new UserRegisteredEvent($user));
+
+        return $user;
+    }
+
+    public function asCommand(Command $command): void
+    {
+        $this->handle(
+            first_name: $command->argument('first_name'),
+            last_name: $command->argument('last_name'),
+            email: $command->argument('email'),
+            password: $command->argument('password'),
+        );
+
+        $command->line('Done!');
+    }
+
+    public function asController(): User
+    {
+        return $this->handle(
+            first_name: request()->input('first_name'),
+            last_name: request()->input('last_name'),
+            email: request()->input('email'),
+            password: request()->input('password'),
+            roles: request()->input('roles'),
+            permissions: request()->input('permissions'),
+        );
+    }
+
+    #[ArrayShape(['first_name' => 'string[]', 'last_name' => 'string[]', 'email' => 'array', 'password' => 'string[]', 'roles' => 'array', 'permissions' => 'array'])]
+    public function rules(): array
+    {
+        return [
+            'first_name' => ['required', 'string', 'min:2'],
+            'last_name' => ['required', 'string', 'min:2'],
+            'email' => ['required', 'email', Rule::unique('users')],
+            'password' => ['required', 'confirmed', 'string', 'min:6'],
+            'roles' => ['nullable', Rule::in(RoleEnum::values())],
+            'permissions' => ['nullable', Rule::in(PermissionEnum::values())],
+        ];
+    }
+}
