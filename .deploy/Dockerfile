@@ -51,11 +51,13 @@ ARG XDEBUG_VERSION=3.1.4
 FROM base as local
 RUN apk --no-cache --update add  \
     bash \
+    git \
     && pecl install xdebug-${XDEBUG_VERSION} \
     && docker-php-ext-enable xdebug \
     && apk del --purge autoconf build-dependencies g++ make
 
-curl -Os https://uploader.codecov.io/latest/alpine/codecov chmod +x codecov ./codecov
+RUN cd /usr/bin && curl -Os https://uploader.codecov.io/latest/alpine/codecov && chmod +x ./codecov
+#RUN codecov --rootDir /var/www/html/api --token b297e7df-8c76-4ab4-aeb2-69201acae7ef -f /var/www/html/tests/coverage/index.xml
 COPY .deploy/php/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY .deploy/php/php.ini-development /usr/local/etc/php/php.ini-development
 
