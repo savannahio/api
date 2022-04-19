@@ -38,12 +38,15 @@ use Spatie\Permission\Models\Role as SpatieRole;
  */
 class Role extends SpatieRole
 {
-    #[ArrayShape(['id' => 'int', 'name' => '\\App\\Models\\Support\\Enum\\PermissionEnum'])]
+    protected $with = ['permissions'];
+
+    #[ArrayShape(['id' => 'int', 'name' => 'string', 'permissions' => '\\App\\Models\\Support\\Permission[]|\\Illuminate\\Database\\Eloquent\\Collection'])]
     public function toArray(): array
     {
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'permissions' => $this->permissions,
         ];
     }
 }
