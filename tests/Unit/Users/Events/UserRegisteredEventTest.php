@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Events;
+namespace Tests\Unit\Users\Events;
 
 use App\Users\Events\UserRegisteredEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace App\Support\Providers;
 
-use App\Models\ACL\Permission;
-use App\Models\ACL\Role;
-use App\Models\Support\Enum\MorphMapEnum;
-use App\Models\Users\PersonalAccessToken;
+use App\Auth\Models\Permission;
+use App\Auth\Models\PersonalAccessToken;
+use App\Auth\Models\Role;
+use App\Support\Enum\MorphMapEnum;
 use App\Users\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\PersonalAccessTokens;
+namespace App\Auth\Actions;
 
 use App\Users\Models\User;
 use Illuminate\Http\JsonResponse;

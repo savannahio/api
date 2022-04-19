@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Users\Models;
+namespace App\Auth\Models;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,7 +12,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
 
 /**
- * App\Models\Users\PersonalAccessToken.
+ * App\Auth\Models\PersonalAccessToken.
  *
  * @property int            $id
  * @property string         $tokenable_type

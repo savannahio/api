@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models\Support\Traits;
+namespace Tests\Unit\Locations\Traits;
 
 use App\Locations\Models\Address;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Auth;
+namespace Tests\Unit\Auth\Actions;
 
 use App\Auth\Actions\ResendVerificationEmail;
 use Illuminate\Auth\Notifications\VerifyEmail;

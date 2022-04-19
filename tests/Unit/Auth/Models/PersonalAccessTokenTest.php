@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models\Users;
+namespace Tests\Unit\Auth\Models;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Unit\UnitTestCase;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Support\Traits;
+namespace App\Locations\Traits;
 
-use App\Models\Support\Address;
+use App\Locations\Models\Address;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 

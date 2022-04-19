@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Users;
+namespace Tests\Unit\Users\Actions;
 
 use App\Users\Actions\ShowUserDefaultAddress;
 use Illuminate\Foundation\Testing\RefreshDatabase;

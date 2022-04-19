@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Auth;
+namespace App\Auth\Actions;
 
-use App\Events\Users\ResetPasswordEvent;
+use App\Users\Events\ResetPasswordEvent;
 use App\Users\Models\User;
 use Lorisleiva\Actions\Concerns\AsAction;
 

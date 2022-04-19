@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Users;
+namespace App\Users\Actions;
 
-use App\Actions\Support\CreateAddress;
-use App\Actions\Support\UpdateAddress;
-use App\Events\Users\UserUpdatedEvent;
-use App\Models\Support\Address;
-use App\Models\Users\User;
+use App\Locations\Actions\CreateAddress;
+use App\Locations\Actions\UpdateAddress;
+use App\Locations\Models\Address;
+use App\Users\Events\UserUpdatedEvent;
+use App\Users\Models\User;
 use Illuminate\Http\JsonResponse;
 use Lorisleiva\Actions\Concerns\AsAction;
 

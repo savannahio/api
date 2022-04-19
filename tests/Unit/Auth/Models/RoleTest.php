@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models\ACL;
+namespace Tests\Unit\Auth\Models;
 
 use App\Auth\Enum\RoleEnum;
 use App\Auth\Models\Role;

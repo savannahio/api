@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\ACL\Models;
+namespace App\Auth\Models;
 
 use App\Users\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,19 +12,19 @@ use JetBrains\PhpStorm\ArrayShape;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 /**
- * App\Models\ACL\Permission.
+ * App\Auth\Models\Permission.
  *
- * @property int                               $id
- * @property string                            $name
- * @property string                            $guard_name
- * @property null|Carbon                       $created_at
- * @property null|Carbon                       $updated_at
- * @property Collection|Permission[]           $permissions
- * @property null|int                          $permissions_count
- * @property \App\Models\ACL\Role[]|Collection $roles
- * @property null|int                          $roles_count
- * @property Collection|User[]                 $users
- * @property null|int                          $users_count
+ * @property int                                $id
+ * @property string                             $name
+ * @property string                             $guard_name
+ * @property null|Carbon                        $created_at
+ * @property null|Carbon                        $updated_at
+ * @property Collection|Permission[]            $permissions
+ * @property null|int                           $permissions_count
+ * @property \App\Auth\Models\Role[]|Collection $roles
+ * @property null|int                           $roles_count
+ * @property Collection|User[]                  $users
+ * @property null|int                           $users_count
  *
  * @method static Builder|Permission newModelQuery()
  * @method static Builder|Permission newQuery()

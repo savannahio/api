@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Actions\Users\CreateUser;
-use App\Models\ACL\Enum\RoleEnum;
-use App\Models\Users\User;
+use App\Auth\Enum\RoleEnum;
+use App\Users\Actions\CreateUser;
+use App\Users\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

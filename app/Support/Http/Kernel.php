@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Http;
+namespace App\Support\Http;
 
-use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\EncryptCookies;
-use App\Http\Middleware\PreventRequestsDuringMaintenance;
-use App\Http\Middleware\RedirectIfAuthenticated;
-use App\Http\Middleware\TrimStrings;
-use App\Http\Middleware\TrustProxies;
-use App\Http\Middleware\VerifyCsrfToken;
+use App\Support\Http\Middleware\Authenticate;
+use App\Support\Http\Middleware\EncryptCookies;
+use App\Support\Http\Middleware\PreventRequestsDuringMaintenance;
+use App\Support\Http\Middleware\RedirectIfAuthenticated;
+use App\Support\Http\Middleware\TrimStrings;
+use App\Support\Http\Middleware\TrustProxies;
+use App\Support\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;

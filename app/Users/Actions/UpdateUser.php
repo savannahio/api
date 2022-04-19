@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Users;
+namespace App\Users\Actions;
 
-use App\Events\Users\UserUpdatedEmailEvent;
-use App\Events\Users\UserUpdatedEvent;
-use App\Models\Users\User;
+use App\Users\Events\UserUpdatedEmailEvent;
+use App\Users\Events\UserUpdatedEvent;
+use App\Users\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use JetBrains\PhpStorm\ArrayShape;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Support;
+namespace App\Locations\Actions;
 
-use App\Models\Support\Address;
+use App\Locations\Models\Address;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class CreateAddress

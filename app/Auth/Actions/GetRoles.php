@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\ACL\Actions;
+namespace App\Auth\Actions;
 
-use App\Models\ACL\Role;
-use App\Models\Support\Enum\DirectionEnum;
-use App\Models\Support\Traits\HasPaginatedInput;
+use App\Auth\Models\Role;
+use App\Support\Enum\DirectionEnum;
+use App\Support\Traits\HasPaginatedInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Lorisleiva\Actions\Concerns\AsAction;
 

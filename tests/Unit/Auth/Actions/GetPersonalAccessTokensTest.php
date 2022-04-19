@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\PersonalAccessTokens;
+namespace Tests\Unit\Auth\Actions;
 
 use App\Auth\Actions\CreatePersonalAccessToken;
 use App\Auth\Actions\GetPersonalAccessTokens;

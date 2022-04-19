@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models\Support;
+namespace Tests\Unit\Locations\Models;
 
 use App\Locations\Models\Address;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -53,6 +53,15 @@ final class AddressTest extends UnitTestCase
      * @covers \App\Locations\Models\Address::users
      */
     public function testUsersMorphToMany(): void
+    {
+        $address = Address::factory()->create();
+        static::assertInstanceOf(MorphToMany::class, $address->users());
+    }
+
+    /**
+     * @covers \App\Locations\Models\Address::newFactory
+     */
+    public function testHasFactory(): void
     {
         $address = Address::factory()->create();
         static::assertInstanceOf(MorphToMany::class, $address->users());

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Support;
+namespace Tests\Unit\Locations\Actions;
 
 use App\Locations\Actions\CreateAddress;
 use App\Locations\Actions\UpdateAddress;

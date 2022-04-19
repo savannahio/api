@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Actions\ACL;
+namespace Tests\Feature\Auth\Actions;
 
 use App\Auth\Enum\PermissionEnum;
 use App\Support\Enum\RouteEnum;

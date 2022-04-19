@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Users;
+namespace App\Users\Models;
 
-use App\Models\ACL\Permission;
-use App\Models\ACL\Role;
-use App\Models\Support\Traits\HasAddresses;
-use App\Models\Users\Builders\UserBuilder;
-use App\Models\Users\Traits\HasAppPermissions;
+use App\Auth\Models\Permission;
+use App\Auth\Models\PersonalAccessToken;
+use App\Auth\Models\Role;
+use App\Locations\Models\Address;
+use App\Locations\Traits\HasAddresses;
+use App\Users\Builders\UserBuilder;
+use App\Users\Traits\HasAppPermissions;
+use Database\Factories\UserFactory;
 use Eloquent;
 use Hash;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -27,7 +30,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * App\Models\Users\User.
+ * App\Users\Models\User.
  *
  * @property int                                                   $id
  * @property string                                                $first_name
@@ -40,7 +43,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property null|Carbon                                           $created_at
  * @property null|Carbon                                           $updated_at
  * @property null|Carbon                                           $deleted_at
- * @property \App\Models\Support\Address[]|Collection              $addresses
+ * @property Address[]|Collection                                  $addresses
  * @property null|int                                              $addresses_count
  * @property DatabaseNotification[]|DatabaseNotificationCollection $notifications
  * @property null|int                                              $notifications_count
@@ -48,10 +51,10 @@ use Spatie\Permission\Traits\HasRoles;
  * @property null|int                                              $permissions_count
  * @property Collection|Role[]                                     $roles
  * @property null|int                                              $roles_count
- * @property \App\Models\Users\PersonalAccessToken[]|Collection    $tokens
+ * @property Collection|PersonalAccessToken[]                      $tokens
  * @property null|int                                              $tokens_count
  *
- * @method static \Database\Factories\Users\UserFactory factory(...$parameters)
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
  * @method static UserBuilder|User newModelQuery()
  * @method static UserBuilder|User newQuery()
  * @method static QueryBuilder|User onlyTrashed()
@@ -127,5 +130,11 @@ class User extends Authenticatable implements MustVerifyEmail
         $data['permissions'] = $this->permissions;
 
         return $data;
+    }
+
+    /** @codeCoverageIgnore */
+    protected static function newFactory(): UserFactory
+    {
+        return UserFactory::new();
     }
 }

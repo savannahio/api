@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Events;
+namespace Tests\Unit\Users\Events;
 
+use App\Locations\Models\Address;
 use App\Users\Actions\UpdateUserDefaultAddress;
 use App\Users\Events\UserUpdatedEvent;
-use App\Locations\Models\Address;
 use Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Unit\UnitTestCase;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Users;
+namespace Tests\Unit\Users\Actions;
 
-use App\Users\Actions\SyncUserPermissions;
 use App\Auth\Enum\PermissionEnum;
 use App\Auth\Models\Permission;
+use App\Users\Actions\SyncUserPermissions;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Unit\UnitTestCase;

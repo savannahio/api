@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\PersonalAccessTokens;
+namespace App\Auth\Actions;
 
-use App\Models\Support\Enum\DirectionEnum;
-use App\Models\Support\Traits\HasPaginatedInput;
+use App\Support\Enum\DirectionEnum;
+use App\Support\Traits\HasPaginatedInput;
 use App\Users\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Lorisleiva\Actions\Concerns\AsAction;

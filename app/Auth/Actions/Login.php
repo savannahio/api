@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Auth;
+namespace App\Auth\Actions;
 
 use Illuminate\Support\Facades\Auth;
 use Lorisleiva\Actions\Concerns\AsAction;

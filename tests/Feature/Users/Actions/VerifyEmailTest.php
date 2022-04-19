@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Actions\Users;
+namespace Tests\Feature\Users\Actions;
 
 use App\Support\Enum\RouteEnum;
 use App\Users\Models\User;

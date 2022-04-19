@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace App\Support\Providers;
 
-use App\Listeners\UserListener;
+use App\Users\Listeners\UserListener;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

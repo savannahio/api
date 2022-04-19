@@ -17,12 +17,12 @@
             <directory suffix=".php">./app</directory>
         </include>
         <exclude>
-            <directory>./app/Console</directory>
-            <file>./app/Exceptions/Handler.php</file>
-            <directory>./app/Http</directory>
-            <directory>./app/Models/ACL/Enum</directory>
-            <directory>./app/Models/Support/Enum</directory>
-            <directory>./app/Providers</directory>
+            <directory>./app/Auth/Enum</directory>
+            <directory>./app/Support/Console</directory>
+            <directory>./app/Support/Enum</directory>
+            <file>./app/Support/Exceptions/Handler.php</file>
+            <directory>./app/Support/Http</directory>
+            <directory>./app/Support/Providers</directory>
         </exclude>
         <report>
             <html outputDirectory="tests/reports/html"/>

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Listeners;
+namespace Tests\Unit\Users\Listeners;
 
 use App\Auth\Actions\ResetPassword;
+use App\Locations\Models\Address;
 use App\Users\Actions\UpdateUser;
 use App\Users\Actions\UpdateUserDefaultAddress;
 use App\Users\Events\UserUpdatedEvent;
 use App\Users\Listeners\UserListener;
-use App\Locations\Models\Address;
 use App\Users\Notifications\ResetPasswordNotification;
 use Event;
 use Illuminate\Auth\Notifications\VerifyEmail;

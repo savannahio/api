@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Users;
+namespace App\Users\Actions;
 
-use App\Models\ACL\Enum\RoleEnum;
-use App\Models\ACL\Role;
-use App\Models\Users\User;
+use App\Auth\Enum\RoleEnum;
+use App\Auth\Models\Role;
+use App\Users\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use Lorisleiva\Actions\Concerns\AsAction;

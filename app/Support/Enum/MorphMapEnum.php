@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Support\Enum;
+namespace App\Support\Enum;
 
-use App\Models\Support\Traits\HasEnumCases;
+use App\Support\Traits\HasEnumCases;
 
 enum MorphMapEnum: int
 {

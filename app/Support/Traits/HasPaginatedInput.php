@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Support\Traits;
+namespace App\Support\Traits;
 
-use App\Models\Support\Enum\DirectionEnum;
+use App\Support\Enum\DirectionEnum;
 use Illuminate\Validation\Rule;
 use JetBrains\PhpStorm\ArrayShape;
 

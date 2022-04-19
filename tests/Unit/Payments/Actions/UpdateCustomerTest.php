@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Payments;
+namespace Tests\Unit\Payments\Actions;
 
+use App\Locations\Models\Address;
 use App\Payments\Actions\CreateCustomer;
 use App\Payments\Actions\UpdateCustomer;
-use App\Locations\Models\Address;
 use App\Users\Models\User;
 use Config;
 use Illuminate\Foundation\Testing\RefreshDatabase;

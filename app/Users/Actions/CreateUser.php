@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Users;
+namespace App\Users\Actions;
 
-use App\Events\Users\UserRegisteredEvent;
-use App\Models\ACL\Enum\PermissionEnum;
-use App\Models\ACL\Enum\RoleEnum;
-use App\Models\Users\User;
+use App\Auth\Enum\PermissionEnum;
+use App\Auth\Enum\RoleEnum;
+use App\Users\Events\UserRegisteredEvent;
+use App\Users\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;

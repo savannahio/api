@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Users\Traits;
+namespace App\Users\Traits;
 
-use App\Models\ACL\Enum\PermissionEnum;
-use App\Models\Users\User;
+use App\Auth\Enum\PermissionEnum;
+use App\Users\Models\User;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
 trait HasAppPermissions

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models\Users\Traits;
+namespace Tests\Unit\Users\Traits;
 
 use App\Auth\Enum\PermissionEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;

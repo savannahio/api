@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Payments;
+namespace Tests\Unit\Payments\Actions;
 
 use App\Payments\Actions\CreateCustomer;
 use App\Users\Models\User;

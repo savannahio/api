@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Web;
+namespace App\Support\Actions;
 
-use App\Models\Support\Enum\RouteEnum;
+use App\Support\Enum\RouteEnum;
 use Cache;
 use File;
 use Lorisleiva\Actions\Concerns\AsAction;

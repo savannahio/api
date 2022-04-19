@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Payments;
+namespace App\Payments\Actions;
 
-use App\Models\Support\Address;
+use App\Locations\Models\Address;
 use App\Users\Models\User;
 use Config;
 use JetBrains\PhpStorm\ArrayShape;

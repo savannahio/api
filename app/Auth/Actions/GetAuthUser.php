@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Auth;
+namespace App\Auth\Actions;
 
 use App\Users\Models\User;
 use Lorisleiva\Actions\Concerns\AsAction;

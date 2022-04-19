@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Users;
+namespace Tests\Unit\Users\Actions;
 
-use App\Users\Actions\UpdateUserDefaultAddress;
 use App\Locations\Models\Address;
+use App\Users\Actions\UpdateUserDefaultAddress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Unit\UnitTestCase;
 

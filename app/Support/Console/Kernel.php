@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Console;
+namespace App\Support\Console;
 
-use App\Actions\Users\CreateUser;
+use App\Users\Actions\CreateUser;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel

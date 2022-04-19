@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Events;
+namespace Tests\Unit\Users\Events;
 
 use App\Users\Actions\UpdateUser;
 use App\Users\Events\UserUpdatedEmailEvent;

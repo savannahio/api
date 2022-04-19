@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Payments;
+namespace App\Payments\Actions;
 
 use App\Users\Models\User;
 use Config;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Listeners;
+namespace App\Users\Listeners;
 
-use App\Actions\Payments\CreateCustomer;
-use App\Actions\Payments\UpdateCustomer;
-use App\Events\Users\ResetPasswordEvent;
-use App\Events\Users\UserRegisteredEvent;
-use App\Events\Users\UserUpdatedEmailEvent;
-use App\Events\Users\UserUpdatedEvent;
-use App\Notifications\Users\ResetPasswordNotification;
+use App\Payments\Actions\CreateCustomer;
+use App\Payments\Actions\UpdateCustomer;
+use App\Users\Events\ResetPasswordEvent;
+use App\Users\Events\UserRegisteredEvent;
+use App\Users\Events\UserUpdatedEmailEvent;
+use App\Users\Events\UserUpdatedEvent;
+use App\Users\Notifications\ResetPasswordNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Queue\InteractsWithQueue;

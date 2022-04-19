@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models\Users;
+namespace Tests\Unit\Users\Models;
 
 use App\Users\Builders\UserBuilder;
 use App\Users\Models\User;

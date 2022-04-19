@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Support;
+namespace App\Locations\Models;
 
 use App\Users\Models\User;
+use Database\Factories\AddressFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -14,22 +16,22 @@ use Illuminate\Support\Carbon;
 use JetBrains\PhpStorm\ArrayShape;
 
 /**
- * App\Models\Support\Address.
+ * App\Locations\Models\Address.
  *
- * @property int                                             $id
- * @property string                                          $name
- * @property string                                          $street1
- * @property null|string                                     $street2
- * @property string                                          $city
- * @property string                                          $state
- * @property string                                          $zip
- * @property string                                          $country
- * @property null|Carbon                                     $created_at
- * @property null|Carbon                                     $updated_at
- * @property \Illuminate\Database\Eloquent\Collection|User[] $users
- * @property null|int                                        $users_count
+ * @property int               $id
+ * @property string            $name
+ * @property string            $street1
+ * @property null|string       $street2
+ * @property string            $city
+ * @property string            $state
+ * @property string            $zip
+ * @property string            $country
+ * @property null|Carbon       $created_at
+ * @property null|Carbon       $updated_at
+ * @property Collection|User[] $users
+ * @property null|int          $users_count
  *
- * @method static \Database\Factories\Support\AddressFactory factory(...$parameters)
+ * @method static \Database\Factories\AddressFactory factory(...$parameters)
  * @method static Builder|Address newModelQuery()
  * @method static Builder|Address newQuery()
  * @method static Builder|Address query()
@@ -73,5 +75,11 @@ class Address extends Model
         }
 
         return $data;
+    }
+
+    /** @codeCoverageIgnore */
+    protected static function newFactory(): AddressFactory
+    {
+        return AddressFactory::new();
     }
 }

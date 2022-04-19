@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\ACL;
+namespace Tests\Unit\Auth\Actions;
 
 use App\Auth\Actions\GetPermissions;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Users;
+namespace App\Users\Actions;
 
-use App\Models\Users\User;
+use App\Users\Models\User;
 use JetBrains\PhpStorm\Pure;
 use Lorisleiva\Actions\Concerns\AsAction;
 

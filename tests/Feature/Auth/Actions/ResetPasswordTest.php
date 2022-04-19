@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Feature\Actions\Auth;
+namespace Tests\Feature\Auth\Actions;
 
 use App\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;

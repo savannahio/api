@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-use App\Actions\ACL\GetPermissions;
-use App\Actions\ACL\GetRoles;
-use App\Actions\Auth\GetAuthUser;
-use App\Actions\Auth\Login;
-use App\Actions\Auth\ResendVerificationEmail;
-use App\Actions\Auth\ResetPassword;
-use App\Actions\PersonalAccessTokens\CreatePersonalAccessToken;
-use App\Actions\PersonalAccessTokens\DeletePersonalAccessToken;
-use App\Actions\PersonalAccessTokens\GetPersonalAccessTokens;
-use App\Actions\Users\CreateUser;
-use App\Actions\Users\DeleteUser;
-use App\Actions\Users\GetUserPermissions;
-use App\Actions\Users\GetUserRoles;
-use App\Actions\Users\GetUsers;
-use App\Actions\Users\ShowUser;
-use App\Actions\Users\ShowUserDefaultAddress;
-use App\Actions\Users\SyncUserPermissions;
-use App\Actions\Users\SyncUserRoles;
-use App\Actions\Users\UpdateUser;
-use App\Actions\Users\UpdateUserDefaultAddress;
-use App\Actions\Users\VerifyEmail;
-use App\Models\Support\Enum\RouteEnum;
+use App\Auth\Actions\CreatePersonalAccessToken;
+use App\Auth\Actions\DeletePersonalAccessToken;
+use App\Auth\Actions\GetAuthUser;
+use App\Auth\Actions\GetPermissions;
+use App\Auth\Actions\GetPersonalAccessTokens;
+use App\Auth\Actions\GetRoles;
+use App\Auth\Actions\Login;
+use App\Auth\Actions\ResendVerificationEmail;
+use App\Auth\Actions\ResetPassword;
+use App\Support\Enum\RouteEnum;
+use App\Users\Actions\CreateUser;
+use App\Users\Actions\DeleteUser;
+use App\Users\Actions\GetUserPermissions;
+use App\Users\Actions\GetUserRoles;
+use App\Users\Actions\GetUsers;
+use App\Users\Actions\ShowUser;
+use App\Users\Actions\ShowUserDefaultAddress;
+use App\Users\Actions\SyncUserPermissions;
+use App\Users\Actions\SyncUserRoles;
+use App\Users\Actions\UpdateUser;
+use App\Users\Actions\UpdateUserDefaultAddress;
+use App\Users\Actions\VerifyEmail;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['signed', 'throttle:6,1'])

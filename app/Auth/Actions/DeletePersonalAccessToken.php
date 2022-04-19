@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\PersonalAccessTokens;
+namespace App\Auth\Actions;
 
-use App\Models\Users\PersonalAccessToken;
+use App\Auth\Models\PersonalAccessToken;
 use App\Users\Models\User;
 use Illuminate\Http\JsonResponse;
 use JetBrains\PhpStorm\Pure;

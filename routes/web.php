@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Actions\Auth\Logout;
-use App\Actions\Web\GetApiDocumentation;
-use App\Models\Support\Enum\RouteEnum;
+use App\Auth\Actions\Logout;
+use App\Support\Actions\GetApiDocumentation;
+use App\Support\Enum\RouteEnum;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])

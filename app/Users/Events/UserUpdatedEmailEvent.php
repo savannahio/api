@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Events\Users;
+namespace App\Users\Events;
 
-use App\Models\Users\User;
+use App\Users\Models\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

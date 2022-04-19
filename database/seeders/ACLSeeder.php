@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\ACL\Enum\PermissionEnum;
-use App\Models\ACL\Enum\RoleEnum;
-use App\Models\ACL\Permission;
-use App\Models\ACL\Role;
+use App\Auth\Enum\PermissionEnum;
+use App\Auth\Enum\RoleEnum;
+use App\Auth\Models\Permission;
+use App\Auth\Models\Role;
 use Illuminate\Database\Seeder;
 
 class ACLSeeder extends Seeder

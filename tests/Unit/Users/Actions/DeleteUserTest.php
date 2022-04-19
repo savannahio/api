@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\Users;
+namespace Tests\Unit\Users\Actions;
 
-use App\Users\Actions\DeleteUser;
 use App\Locations\Models\Address;
+use App\Users\Actions\DeleteUser;
 use App\Users\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Unit\UnitTestCase;
