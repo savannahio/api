@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models\Users;
 
-use App\Models\Support\Permission;
-use App\Models\Support\Role;
+use App\Models\ACL\Permission;
+use App\Models\ACL\Role;
+use App\Models\Support\Traits\HasAddresses;
 use App\Models\Users\Builders\UserBuilder;
 use App\Models\Users\Traits\HasAppPermissions;
 use Eloquent;
@@ -13,6 +14,7 @@ use Hash;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
@@ -37,6 +39,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @property null|string                                           $remember_token
  * @property null|Carbon                                           $created_at
  * @property null|Carbon                                           $updated_at
+ * @property null|Carbon                                           $deleted_at
+ * @property \App\Models\Support\Address[]|Collection              $addresses
+ * @property null|int                                              $addresses_count
  * @property DatabaseNotification[]|DatabaseNotificationCollection $notifications
  * @property null|int                                              $notifications_count
  * @property Collection|Permission[]                               $permissions
@@ -49,10 +54,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Database\Factories\Users\UserFactory factory(...$parameters)
  * @method static UserBuilder|User newModelQuery()
  * @method static UserBuilder|User newQuery()
+ * @method static QueryBuilder|User onlyTrashed()
  * @method static UserBuilder|User permission($permissions)
  * @method static UserBuilder|User query()
  * @method static UserBuilder|User role($roles, $guard = null)
  * @method static UserBuilder|User whereCreatedAt($value)
+ * @method static UserBuilder|User whereDeletedAt($value)
  * @method static UserBuilder|User whereEmail($value)
  * @method static UserBuilder|User whereEmailVerifiedAt($value)
  * @method static UserBuilder|User whereFirstName($value)
@@ -62,15 +69,19 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static UserBuilder|User wherePaymentsId($value)
  * @method static UserBuilder|User whereRememberToken($value)
  * @method static UserBuilder|User whereUpdatedAt($value)
+ * @method static QueryBuilder|User withTrashed()
+ * @method static QueryBuilder|User withoutTrashed()
  * @mixin Eloquent
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use HasAddresses;
     use HasApiTokens;
     use HasAppPermissions;
     use HasFactory;
     use HasRoles;
     use Notifiable;
+    use SoftDeletes;
 
     /** @var array<string, string> */
     protected $casts = [
@@ -82,6 +93,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function newEloquentBuilder($query): UserBuilder
     {
         return new UserBuilder($query);
+    }
+
+    public function newPasswordEquals(string $new_password): bool
+    {
+        return Hash::check($new_password, $this->password);
     }
 
     public function setPassword(string $password): void
@@ -108,7 +124,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_email_verified' => $this->hasVerifiedEmail(),
         ];
         $data['roles'] = $this->roles;
-        $data['permissions'] = $this->getAllPermissions();
+        $data['permissions'] = $this->permissions;
 
         return $data;
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Support;
+namespace App\Models\ACL;
 
 use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,19 +12,19 @@ use JetBrains\PhpStorm\ArrayShape;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 /**
- * App\Models\Support\Permission.
+ * App\Models\ACL\Permission.
  *
- * @property int                                   $id
- * @property string                                $name
- * @property string                                $guard_name
- * @property null|Carbon                           $created_at
- * @property null|Carbon                           $updated_at
- * @property Collection|Permission[]               $permissions
- * @property null|int                              $permissions_count
- * @property \App\Models\Support\Role[]|Collection $roles
- * @property null|int                              $roles_count
- * @property Collection|User[]                     $users
- * @property null|int                              $users_count
+ * @property int                               $id
+ * @property string                            $name
+ * @property string                            $guard_name
+ * @property null|Carbon                       $created_at
+ * @property null|Carbon                       $updated_at
+ * @property Collection|Permission[]           $permissions
+ * @property null|int                          $permissions_count
+ * @property \App\Models\ACL\Role[]|Collection $roles
+ * @property null|int                          $roles_count
+ * @property Collection|User[]                 $users
+ * @property null|int                          $users_count
  *
  * @method static Builder|Permission newModelQuery()
  * @method static Builder|Permission newQuery()
@@ -40,7 +40,7 @@ use Spatie\Permission\Models\Permission as SpatiePermission;
  */
 class Permission extends SpatiePermission
 {
-    #[ArrayShape(['id' => 'int', 'name' => '\\App\\Models\\Support\\Enum\\PermissionEnum'])]
+    #[ArrayShape(['id' => 'int', 'name' => '\\App\\Models\\ACL\\Enum\\PermissionEnum'])]
     public function toArray(): array
     {
         return [

@@ -57,7 +57,7 @@ RUN apk --no-cache --update add  \
     && apk del --purge autoconf build-dependencies g++ make
 
 RUN cd /usr/bin && curl -Os https://uploader.codecov.io/latest/alpine/codecov && chmod +x ./codecov
-#RUN codecov --rootDir /var/www/html/api --token b297e7df-8c76-4ab4-aeb2-69201acae7ef -f /var/www/html/tests/coverage/index.xml
+#    codecov --rootDir /var/www/html  --file /var/www/html/tests/reports/clover.xml
 COPY .deploy/php/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY .deploy/php/php.ini-development /usr/local/etc/php/php.ini-development
 

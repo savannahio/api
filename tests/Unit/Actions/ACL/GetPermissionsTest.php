@@ -1,50 +1,28 @@
 <?php
 
-namespace Tests\Feature\Actions\ACL;
+declare(strict_types=1);
 
-use App\Models\Support\Enum\PermissionEnum;
-use App\Models\Support\Enum\RouteEnum;
+namespace Tests\Unit\Actions\ACL;
+
+use App\Actions\ACL\GetPermissions;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\UnitTestCase;
 
-final class GetPermissionsTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class GetPermissionsTest extends UnitTestCase
 {
-
     use RefreshDatabase;
 
     /**
      * @covers \App\Actions\ACL\GetPermissions::handle
-     * @covers \App\Actions\ACL\GetPermissions::asController
      */
     public function testSuccessfulGet(): void
     {
-        $user = parent::createUser(permissions: [PermissionEnum::VIEW_PERMISSIONS->value]);
-        $this->actingAs($user);
-        $result = $this->getJson(route(RouteEnum::PERMISSIONS_LIST->value));
-        $result->assertStatus(200);
-    }
-
-    /**
-     * @covers \App\Actions\ACL\GetPermissions::handle
-     * @covers \App\Actions\ACL\GetPermissions::asController
-     */
-    public function testUnauthorized(): void
-    {
-        $user = parent::createUser();
-        $this->actingAs($user);
-        $result = $this->getJson(route(RouteEnum::PERMISSIONS_LIST->value));
-        $result->assertStatus(403);
-    }
-
-    /**
-     * @covers \App\Actions\ACL\GetPermissions::asController
-     * @covers \App\Actions\ACL\GetPermissions::rules
-     */
-    public function testValidationErrors(): void
-    {
-        $user = parent::createUser(permissions: [PermissionEnum::VIEW_PERMISSIONS->value]);
-        $this->actingAs($user);
-        $result = $this->getJson(route(RouteEnum::PERMISSIONS_LIST->value, ['page' => 'asdfasdf']));
-        $result->assertStatus(422);
+        $result = GetPermissions::make()->handle(page: 3);
+        static::assertInstanceOf(LengthAwarePaginator::class, $result);
     }
 }

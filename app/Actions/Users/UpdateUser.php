@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Users;
 
 use App\Events\Users\UserUpdatedEmailEvent;
+use App\Events\Users\UserUpdatedEvent;
 use App\Models\Users\User;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -17,25 +18,35 @@ class UpdateUser
 
     public function handle(User $user, ?string $first_name = null, ?string $last_name = null, ?string $email = null): User
     {
-        $updating_email = Str::lower($user->email) !== Str::lower($email);
+        $updating_first_name = !(null === $first_name) && $user->first_name !== $first_name;
+        $updating_last_name = !(null === $last_name) && $user->last_name !== $last_name;
+        $updating_email = !(null === $email) && $user->email !== $email;
+        $setting_new_email = !(null === $email) && Str::lower($user->email) !== Str::lower($email);
 
-        if (null !== $first_name) {
+        if ($updating_first_name) {
             $user->first_name = $first_name;
         }
 
-        if (null !== $last_name) {
+        if ($updating_last_name) {
             $user->last_name = $last_name;
         }
 
-        if (null !== $email && $updating_email) {
-            $user->email_verified_at = null;
+        if ($updating_email) {
             $user->email = Str::lower($email);
+        }
+
+        if ($setting_new_email) {
+            $user->email_verified_at = null;
         }
 
         $user->save();
 
-        if ($updating_email) {
-            event(new UserUpdatedEmailEvent($user));
+        if ($updating_first_name || $updating_last_name || $updating_email) {
+            UserUpdatedEvent::dispatch($user);
+        }
+
+        if ($setting_new_email) {
+            UserUpdatedEmailEvent::dispatch($user);
         }
 
         return $user;

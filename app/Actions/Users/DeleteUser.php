@@ -5,25 +5,32 @@ declare(strict_types=1);
 namespace App\Actions\Users;
 
 use App\Models\Users\User;
+use Illuminate\Http\JsonResponse;
 use JetBrains\PhpStorm\Pure;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class DeleteUser
 {
     use AsAction;
 
-    public function handle(User $user): User
+    public function handle(User $user): void
     {
-        return $user;
+        $user->addresses()->delete();
+        $user->delete();
     }
 
     #[Pure]
-    public function asController(User $user): User
+    public function asController(User $user): JsonResponse
     {
-        request()->user()->canShowUsers($user, true);
+        $requesting_user = request()->user();
+        $requesting_user->canDeleteUsers(true);
+        if ($requesting_user->id === $user->id) {
+            throw new BadRequestHttpException('Cannot delete your own user');
+        }
 
-        return $this->handle(
-            $user,
-        );
+        $this->handle($user);
+
+        return response()->json(null, 204);
     }
 }

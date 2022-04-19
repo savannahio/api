@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\ACL;
 
+use App\Models\ACL\Permission;
 use App\Models\Support\Enum\DirectionEnum;
-use App\Models\Support\Permission;
 use App\Models\Support\Traits\HasPaginatedInput;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -37,8 +37,7 @@ class GetPermissions
 
     public function rules(): array
     {
-        return [
-            ...$this->getPageValidationRules(),
-        ];
+        return array_merge([
+        ], $this->getPageValidationRules());
     }
 }

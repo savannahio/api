@@ -16,6 +16,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.12",
+        "brianium/paratest": "^6.4",
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.8",
         "mockery/mockery": "^1.4.4",
@@ -36,6 +37,15 @@
         }
     },
     "scripts": {
+        "test": [
+            "./vendor/bin/paratest --runner WrapperRunner"
+        ],
+        "feature": [
+            "./vendor/bin/paratest --runner WrapperRunner --testsuite Feature"
+        ],
+        "unit": [
+            "./vendor/bin/paratest --runner WrapperRunner --testsuite Unit"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

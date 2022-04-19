@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications\User;
+namespace App\Notifications\Users;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;

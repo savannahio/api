@@ -12,13 +12,16 @@ use App\Actions\PersonalAccessTokens\CreatePersonalAccessToken;
 use App\Actions\PersonalAccessTokens\DeletePersonalAccessToken;
 use App\Actions\PersonalAccessTokens\GetPersonalAccessTokens;
 use App\Actions\Users\CreateUser;
+use App\Actions\Users\DeleteUser;
 use App\Actions\Users\GetUserPermissions;
 use App\Actions\Users\GetUserRoles;
 use App\Actions\Users\GetUsers;
 use App\Actions\Users\ShowUser;
+use App\Actions\Users\ShowUserDefaultAddress;
 use App\Actions\Users\SyncUserPermissions;
 use App\Actions\Users\SyncUserRoles;
 use App\Actions\Users\UpdateUser;
+use App\Actions\Users\UpdateUserDefaultAddress;
 use App\Actions\Users\VerifyEmail;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Support\Facades\Route;
@@ -105,6 +108,20 @@ Route::middleware(['auth:sanctum'])
                         ;
                         Route::put('', UpdateUser::class)
                             ->name(RouteEnum::USERS_UPDATE->value)
+                        ;
+                        Route::delete('', DeleteUser::class)
+                            ->name(RouteEnum::USERS_DELETE->value)
+                        ;
+
+                        Route::prefix('default_address')
+                            ->group(function (): void {
+                                Route::get('', ShowUserDefaultAddress::class)
+                                    ->name(RouteEnum::USERS_DEFAULT_ADDRESS_SHOW->value)
+                                ;
+                                Route::put('', UpdateUserDefaultAddress::class)
+                                    ->name(RouteEnum::USERS_DEFAULT_ADDRESS_UPDATE->value)
+                                ;
+                            })
                         ;
 
                         Route::prefix('roles')

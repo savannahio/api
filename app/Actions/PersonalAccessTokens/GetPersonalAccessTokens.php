@@ -35,8 +35,7 @@ class GetPersonalAccessTokens
 
     public function rules(): array
     {
-        return [
-            ...$this->getPageValidationRules(),
-        ];
+        return array_merge([
+        ], $this->getPageValidationRules());
     }
 }

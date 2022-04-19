@@ -1,38 +1,45 @@
 <?php
 
-namespace Tests\Feature\Actions\Auth;
+declare(strict_types=1);
 
-use App\Models\Support\Enum\RouteEnum;
+namespace Tests\Unit\Actions\Auth;
+
+use App\Actions\Auth\ResendVerificationEmail;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Notification;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Tests\Unit\UnitTestCase;
 
-final class ResendVerificationEmailTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class ResendVerificationEmailTest extends UnitTestCase
 {
-
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Auth\ResendVerificationEmail::handle
      * @covers \App\Actions\Auth\ResendVerificationEmail::asController
+     * @covers \App\Actions\Auth\ResendVerificationEmail::handle
      */
     public function testSuccess(): void
     {
+        Notification::fake();
         $user = parent::createUser();
-        $this->actingAs($user);
-        $result = $this->postJson(route(RouteEnum::EMAIL_VERIFICATION_RESEND->value));
-        $result->assertStatus(200);
+        ResendVerificationEmail::make()->handle($user);
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 
     /**
-     * @covers \App\Actions\Auth\ResendVerificationEmail::handle
      * @covers \App\Actions\Auth\ResendVerificationEmail::asController
+     * @covers \App\Actions\Auth\ResendVerificationEmail::handle
      */
     public function testSuccessEmailAlreadyVerified(): void
     {
+        $this->expectException(BadRequestHttpException::class);
         $user = parent::createUser();
         $user->markEmailAsVerified();
-        $this->actingAs($user);
-        $result = $this->postJson(route(RouteEnum::EMAIL_VERIFICATION_RESEND->value));
-        $result->assertStatus(400);
+        ResendVerificationEmail::make()->handle($user);
     }
 }

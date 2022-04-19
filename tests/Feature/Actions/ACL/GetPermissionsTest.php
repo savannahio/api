@@ -1,39 +1,65 @@
 <?php
 
-namespace Tests\Feature\Actions\Auth;
+declare(strict_types=1);
 
+namespace Tests\Feature\Actions\ACL;
+
+use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
-final class GetAuthUserTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class GetPermissionsTest extends FeatureTestCase
 {
-
     use RefreshDatabase;
 
-    /**
-     * @covers \App\Actions\Auth\GetAuthUser::asController
-     */
-    public function testSuccessfulGet(): void
+    public function testRequiresAuthentication(): void
     {
-        $user = parent::createUser();
-        $this->actingAs($user);
-        $result = $this->getJson(route(RouteEnum::USERS_ME->value));
-        $result->assertStatus(200);
-        $result->assertJsonStructure([
-            'id', 'first_name', 'last_name', 'email', 'meta' => ['is_email_verified'], 'roles', 'permissions'
-        ], $result->json());
+        $uri = route(name: RouteEnum::PERMISSIONS_LIST->value);
+        $result = $this->getJson($uri);
+        $result->assertStatus(401);
     }
 
     /**
-     * @covers \App\Actions\Auth\GetAuthUser::asController
+     * @covers \App\Actions\ACL\GetPermissions::asController
+     * @covers \App\Actions\ACL\GetPermissions::handle
+     */
+    public function testSuccessfulGet(): void
+    {
+        $user = parent::createUser(permissions: [PermissionEnum::VIEW_PERMISSIONS->value]);
+        $uri = route(name: RouteEnum::PERMISSIONS_LIST->value);
+        $this->actingAs($user);
+        $result = $this->getJson($uri);
+        $result->assertStatus(200);
+    }
+
+    /**
+     * @covers \App\Actions\ACL\GetPermissions::asController
+     * @covers \App\Actions\ACL\GetPermissions::handle
      */
     public function testUnauthorized(): void
     {
-        $result = $this->getJson(route(RouteEnum::USERS_ME->value));
-        $result->assertStatus(401);
-        $result->assertExactJson([
-            'message' => 'Unauthenticated.'
-        ]);
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::PERMISSIONS_LIST->value);
+        $this->actingAs($user);
+        $result = $this->getJson($uri);
+        $result->assertStatus(403);
+    }
+
+    /**
+     * @covers \App\Actions\ACL\GetPermissions::asController
+     * @covers \App\Actions\ACL\GetPermissions::rules
+     */
+    public function testValidationErrors(): void
+    {
+        $user = parent::createUser(permissions: [PermissionEnum::VIEW_PERMISSIONS->value]);
+        $uri = route(name: RouteEnum::PERMISSIONS_LIST->value, parameters: ['page' => 'asdfasdf']);
+        $this->actingAs($user);
+        $result = $this->getJson($uri);
+        $result->assertStatus(422);
     }
 }

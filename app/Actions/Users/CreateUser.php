@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Actions\Users;
 
 use App\Events\Users\UserRegisteredEvent;
-use App\Models\Support\Enum\PermissionEnum;
-use App\Models\Support\Enum\RoleEnum;
+use App\Models\ACL\Enum\PermissionEnum;
+use App\Models\ACL\Enum\RoleEnum;
 use App\Models\Users\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
@@ -22,8 +22,8 @@ class CreateUser
     public string $commandDescription = 'Creates a User';
 
     /**
-     * @param null|array<RoleEnum>       $roles
-     * @param null|array<PermissionEnum> $permissions
+     * @param null|array<string> $roles
+     * @param null|array<string> $permissions
      */
     public function handle(string $first_name, string $last_name, string $email, string $password, ?array $roles = null, ?array $permissions = null): User
     {
@@ -35,13 +35,14 @@ class CreateUser
         $user->save();
 
         if (null !== $roles) {
-            $user->assignRole($roles);
+            $user->syncRoles($roles);
         }
 
         if (null !== $permissions) {
-            $user->givePermissionTo($permissions);
+            $user->syncPermissions($permissions);
         }
-        event(new UserRegisteredEvent($user));
+
+        UserRegisteredEvent::dispatch($user);
 
         return $user;
     }

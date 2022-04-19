@@ -1,24 +1,46 @@
 <?php
 
-namespace Tests\Unit\Actions\Auth;
+declare(strict_types=1);
 
-use App\Actions\Auth\GetAuthUser;
+namespace Tests\Unit\Actions\Payments;
+
+use App\Actions\Payments\CreateCustomer;
+use App\Models\Users\User;
+use Config;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\UnitTestCase;
 
-final class GetAuthUserTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class CreateCustomerTest extends UnitTestCase
 {
-
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Auth\GetAuthUser::handle
+     * @covers \App\Actions\Payments\CreateCustomer::getCustomerRequest
+     * @covers \App\Actions\Payments\CreateCustomer::handle
      */
-    public function testHandle(): void
+    public function testDoesNotCallStripeApi(): void
     {
         $user = parent::createUser();
-        $result = GetAuthUser::make()->handle($user);
-        $this->assertIsArray($result);
+        $user = CreateCustomer::make()->handle($user);
+        static::assertInstanceOf(User::class, $user);
+
+        static::assertNull($user->payments_id);
     }
 
+    /**
+     * @covers \App\Actions\Payments\CreateCustomer::getCustomerRequest
+     * @covers \App\Actions\Payments\CreateCustomer::handle
+     */
+    public function testDoesCallStripeApi(): void
+    {
+        Config::set('app.env', 'local');
+        $user = parent::createUser();
+        $user->refresh();
+        static::assertInstanceOf(User::class, $user);
+        static::assertNotNull($user->payments_id);
+    }
 }

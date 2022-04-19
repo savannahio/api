@@ -2,42 +2,60 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Actions\PersonalAccessTokens;
+namespace Tests\Feature\Actions\PersonalAccessTokens;
 
-use App\Actions\PersonalAccessTokens\CreatePersonalAccessToken;
+use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Sanctum\NewAccessToken;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class CreatePersonalAccessTokenTest extends TestCase
+final class CreatePersonalAccessTokenTest extends FeatureTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @covers \App\Actions\PersonalAccessTokens\CreatePersonalAccessToken::handle
-     */
-    public function testHandle(): void
+    public function testRequiresAuthentication(): void
     {
-        $name = 'asdfas';
-        $user = parent::createUser();
-        $new_access_token = CreatePersonalAccessToken::make()->handle($user, $name);
-        static::assertInstanceOf(NewAccessToken::class, $new_access_token);
-        static::assertSame($new_access_token->accessToken->name, $name);
+        $uri = route(name: RouteEnum::ACCESS_TOKENS_CREATE->value);
+        $result = $this->postJson($uri);
+        $result->assertStatus(401);
     }
 
     /**
-     * @covers \App\Actions\PersonalAccessTokens\CreatePersonalAccessToken::handle
+     * @covers \App\Actions\PersonalAccessTokens\CreatePersonalAccessToken::asController
      */
-    public function testEmptyTokenName(): void
+    public function testSuccess(): void
     {
-        $name = '';
         $user = parent::createUser();
-        $new_access_token = CreatePersonalAccessToken::make()->handle($user, $name);
-        static::assertInstanceOf(NewAccessToken::class, $new_access_token);
-        static::assertSame($new_access_token->accessToken->name, $name);
+        $uri = route(name: RouteEnum::ACCESS_TOKENS_CREATE->value);
+        $this->actingAs($user);
+        $result = $this->postJson($uri, ['name' => 'asdfasdf']);
+        $result->assertStatus(201);
+    }
+
+    /**
+     * @covers \App\Actions\PersonalAccessTokens\CreatePersonalAccessToken::rules
+     */
+    public function testNameIsNotLongEnough(): void
+    {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::ACCESS_TOKENS_CREATE->value);
+        $this->actingAs($user);
+        $result = $this->postJson($uri, ['name' => 'a']);
+        $result->assertStatus(422);
+    }
+
+    /**
+     * @covers \App\Actions\PersonalAccessTokens\CreatePersonalAccessToken::rules
+     */
+    public function testNameMissing(): void
+    {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::ACCESS_TOKENS_CREATE->value);
+        $this->actingAs($user);
+        $result = $this->postJson($uri);
+        $result->assertStatus(422);
     }
 }

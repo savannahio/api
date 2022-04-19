@@ -1,36 +1,73 @@
 <?php
 
-namespace Tests\Unit\Actions\Users;
+declare(strict_types=1);
 
-use App\Actions\Users\VerifyEmail;
-use Illuminate\Auth\Events\Verified;
+namespace Tests\Feature\Actions\Users;
+
+use App\Models\Support\Enum\RouteEnum;
+use App\Models\Users\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Tests\TestCase;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\URL;
+use Tests\Feature\FeatureTestCase;
 
-final class VerifyEmailTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class VerifyEmailTest extends FeatureTestCase
 {
-
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Users\VerifyEmail::handle
+     * @covers \App\Actions\Users\VerifyEmail::asController
      */
-    public function testHandle(): void
+    public function testSuccess(): void
     {
-        $this->expectsEvents([Verified::class]);
         $user = parent::createUser();
-        VerifyEmail::make()->handle($user);
+        $this->actingAs($user);
+        $uri = URL::temporarySignedroute(
+            'verification.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ]
+        );
+        $result = $this->get($uri);
+        $result->assertStatus(200);
     }
 
     /**
-     * @covers \App\Actions\Users\VerifyEmail::handle
+     * @covers \App\Actions\Users\VerifyEmail::asController
      */
     public function testAlreadyVerified(): void
     {
-        $this->expectException(BadRequestHttpException::class);
-        $user = parent::createUser();
+        $user = User::factory()->create(['email_verified_at' => null]);
         $user->markEmailAsVerified();
-        VerifyEmail::make()->handle($user);
+        $this->actingAs($user);
+        $uri = URL::temporarySignedroute(
+            'verification.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ]
+        );
+        $result = $this->get($uri);
+        $result->assertStatus(400);
+    }
+
+    /**
+     * @covers \App\Actions\Users\VerifyEmail::asController
+     */
+    public function testValidationFailure(): void
+    {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::EMAIL_VERIFICATION->value, parameters: ['id' => 'asdfasdf', 'hash' => 'asdfasdf', 'expires' => 'asdf', 'signature' => 'asdf']);
+        $this->actingAs($user);
+        $result = $this->getJson($uri);
+        $result->assertStatus(403);
     }
 }

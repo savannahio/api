@@ -4,72 +4,96 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Actions\Users;
 
+use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class CreateUserTest extends TestCase
+final class UpdateUserTest extends FeatureTestCase
 {
     use RefreshDatabase;
 
+    public function testRequiresAuthentication(): void
+    {
+        $uri = route(name: RouteEnum::USERS_UPDATE->value, parameters: ['user' => 23423]);
+        $result = $this->putJson($uri);
+        $result->assertStatus(401);
+    }
+
     /**
-     * @covers \App\Actions\Users\CreateUser::asController
-     * @covers \App\Actions\Users\CreateUser::rules
+     * @covers \App\Actions\Users\UpdateUser::asController
      */
     public function testSuccessfulApiCall(): void
     {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::USERS_UPDATE->value, parameters: ['user' => $user->id]);
         $request = [
             'first_name' => 'first',
             'last_name' => 'last',
-            'email' => 'test@test.com',
-            'password' => 'testasdf',
-            'password_confirmation' => 'testasdf',
         ];
-
-        $result = $this->postJson(route(RouteEnum::USERS_CREATE->value), $request);
-        $result->assertStatus(201);
+        $this->actingAs($user);
+        $result = $this->putJson($uri, $request);
+        $result->assertStatus(200);
         $result->assertJsonStructure([
             'id', 'first_name', 'last_name', 'email',
         ]);
     }
 
     /**
-     * @covers \App\Actions\Users\CreateUser::asController
-     * @covers \App\Actions\Users\CreateUser::rules
+     * @covers \App\Actions\Users\UpdateUser::asController
+     * @covers \App\Actions\Users\UpdateUser::rules
      */
-    public function testPasswordsDoNotMatch(): void
+    public function testEmailValidation(): void
     {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::USERS_UPDATE->value, parameters: ['user' => $user->id]);
         $request = [
             'first_name' => 'first',
-            'last_name' => 'last',
-            'email' => 'test@test.com',
-            'password' => 'testasdf',
-            'password_confirmation' => 'asdfasdf',
+            'email' => 'asdfasdf',
         ];
-
-        $result = $this->postJson(route(RouteEnum::USERS_CREATE->value), $request);
+        $this->actingAs($user);
+        $result = $this->putJson($uri, $request);
         $result->assertStatus(422);
-        $result->assertJsonStructure(['message', 'errors' => ['password']]);
+        $result->assertJsonStructure(['message', 'errors' => ['email']]);
     }
 
     /**
-     * @covers \App\Actions\Users\CreateUser::asController
-     * @covers \App\Actions\Users\CreateUser::rules
+     * @covers \App\Actions\Users\UpdateUser::asController
+     * @covers \App\Actions\Users\UpdateUser::rules
      */
-    public function testRequiredFields(): void
+    public function testCannotUpdateOtherUsers(): void
     {
-        $request = [];
+        $user_a = parent::createUser();
+        $user_b = parent::createUser(email: 'asoweksd@asdflasd.com');
+        $uri = route(name: RouteEnum::USERS_UPDATE->value, parameters: ['user' => $user_b->id]);
+        $request = [
+            'first_name' => 'first',
+            'email' => 'asdfasdf@asdfasdf.com',
+        ];
+        $this->actingAs($user_a);
+        $result = $this->putJson($uri, $request);
+        $result->assertStatus(403);
+    }
 
-        $result = $this->postJson(route(RouteEnum::USERS_CREATE->value), $request);
-        $result->assertStatus(422);
-        $result->assertJsonStructure(
-            ['message',
-                'errors' => ['email', 'first_name', 'last_name', 'password'],
-            ]
-        );
+    /**
+     * @covers \App\Actions\Users\UpdateUser::asController
+     * @covers \App\Actions\Users\UpdateUser::rules
+     */
+    public function testCanUpdateOtherUsers(): void
+    {
+        $user_a = parent::createUser(permissions: [PermissionEnum::UPDATE_USERS->value]);
+        $user_b = parent::createUser(email: 'asoweksd@asdflasd.com');
+        $uri = route(name: RouteEnum::USERS_UPDATE->value, parameters: ['user' => $user_b->id]);
+        $request = [
+            'first_name' => 'first',
+            'email' => 'asdfasdf@asdfasdf.com',
+        ];
+        $this->actingAs($user_a);
+        $result = $this->putJson($uri, $request);
+        $result->assertStatus(200);
     }
 }

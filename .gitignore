@@ -1,3 +1,7 @@
+/.idea
+/.vscode
+.DS_Store
+
 /public/storage
 /storage/*.key
 /vendor
@@ -6,4 +10,5 @@
 .phpstorm.meta.php
 _ide_helper.php
 .php-cs-fixer.cache
-tests/coverage
+tests/reports
+/codecov

@@ -4,53 +4,29 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Users;
 
-use App\Actions\Users\UpdateUser;
-use App\Events\Users\UserUpdatedEmailEvent;
-use App\Listeners\UserListener;
-use App\Models\Users\User;
-use Event;
-use Illuminate\Auth\Notifications\VerifyEmail;
+use App\Actions\Users\GetUserPermissions;
+use App\Models\ACL\Enum\PermissionEnum;
+use App\Models\ACL\Permission;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\UnitTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class UpdateUserTest extends TestCase
+final class GetUserPermissionsTest extends UnitTestCase
 {
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Users\UpdateUser::handle
+     * @covers \App\Actions\Users\GetUserPermissions::handle
      */
-    public function testSuccessfulUpdate(): void
+    public function testSuccess(): void
     {
-        $this->expectsEvents([UserUpdatedEmailEvent::class]);
-        $first_name = 'first';
-        $last_name = 'last';
-        $email = 'jon.doe@asdf.com';
-        $user = User::factory()->create(['first_name' => $first_name, 'last_name' => $last_name, 'email' => $email]);
-        $user = UpdateUser::make()->handle($user, first_name: 'asdfasfasdfasdf', last_name: 'asdfasdf', email: 'asd@asdfasdf.com');
-        self::assertNotEquals($first_name, $user->first_name);
-        self::assertNotEquals($last_name, $user->last_name);
-        self::assertNotEquals($email, $user->email);
-        Event::assertDispatched(UserListener::class);
-        Event::assertDispatched(VerifyEmail::class);
+        $user = parent::createUser(permissions: [PermissionEnum::VIEW_API_DOCUMENTATION->value]);
+        $permissions = GetUserPermissions::make()->handle($user);
+        static::assertInstanceOf(Collection::class, $permissions);
+        static::assertInstanceOf(Permission::class, $permissions[0]);
     }
-
-    /**
-     * @covers \App\Actions\Users\UpdateUser::handle
-     */
-    public function testEventsDoNotFireWhenSameEmail(): void
-    {
-        $email = 'john.doe@asdf.com';
-        $this->doesntExpectEvents([UserUpdatedEmailEvent::class]);
-        $user = User::factory()->create(['email' => $email]);
-        UpdateUser::make()->handle($user, email: $email);
-
-        Event::assertNotDispatched(UserListener::class);
-        Event::assertNotDispatched(VerifyEmail::class);
-    }
-
 }

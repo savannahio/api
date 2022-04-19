@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Models\Support;
+namespace Tests\Unit\Models\ACL;
 
 use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\ACL\Permission;

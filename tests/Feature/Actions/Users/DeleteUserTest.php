@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Actions\Users;
 
-use App\Models\Support\Enum\PermissionEnum;
+use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Feature\FeatureTestCase;
@@ -13,52 +13,52 @@ use Tests\Feature\FeatureTestCase;
  * @internal
  * @coversNothing
  */
-final class ShowUserTest extends FeatureTestCase
+final class DeleteUserTest extends FeatureTestCase
 {
     use RefreshDatabase;
 
     public function testRequiresAuthentication(): void
     {
-        $uri = route(name: RouteEnum::USERS_SHOW->value, parameters: ['user' => 234]);
-        $result = $this->getJson($uri);
+        $uri = route(name: RouteEnum::USERS_DELETE->value, parameters: ['user' => 234]);
+        $result = $this->deleteJson($uri);
         $result->assertStatus(401);
     }
 
     /**
-     * @covers \App\Actions\Users\ShowUser::asController
+     * @covers \App\Actions\Users\DeleteUser::asController
      */
-    public function testSuccessfulApiCall(): void
+    public function testCannotDeleteOwnUser(): void
     {
-        $user = parent::createUser();
-        $uri = route(name: RouteEnum::USERS_SHOW->value, parameters: ['user' => $user->id]);
+        $user = parent::createUser(permissions: [PermissionEnum::DELETE_USERS->value]);
+        $uri = route(name: RouteEnum::USERS_DELETE->value, parameters: ['user' => $user->id]);
         $this->actingAs($user);
-        $result = $this->getJson($uri);
-        $result->assertStatus(200);
+        $result = $this->deleteJson($uri);
+        $result->assertStatus(400);
     }
 
     /**
-     * @covers \App\Actions\Users\ShowUser::asController
+     * @covers \App\Actions\Users\DeleteUser::asController
      */
-    public function testCanViewOtherUserPermissions(): void
+    public function testCanDeleteOtherUsers(): void
     {
-        $user_a = parent::createUser(permissions: [PermissionEnum::SHOW_USERS->value]);
-        $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
-        $uri = route(name: RouteEnum::USERS_SHOW->value, parameters: ['user' => $user_b->id]);
+        $user_a = parent::createUser(permissions: [PermissionEnum::DELETE_USERS->value]);
+        $user_b = parent::createSecondUser();
+        $uri = route(name: RouteEnum::USERS_DELETE->value, parameters: ['user' => $user_b->id]);
         $this->actingAs($user_a);
-        $result = $this->getJson($uri);
-        $result->assertStatus(200);
+        $result = $this->deleteJson($uri);
+        $result->assertStatus(204);
     }
 
     /**
-     * @covers \App\Actions\Users\ShowUser::asController
+     * @covers \App\Actions\Users\DeleteUser::asController
      */
-    public function testCannotViewOtherUserPermissions(): void
+    public function testCannotDeleteUsers(): void
     {
         $user_a = parent::createUser();
-        $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
-        $uri = route(name: RouteEnum::USERS_SHOW->value, parameters: ['user' => $user_b->id]);
+        $user_b = parent::createSecondUser();
+        $uri = route(name: RouteEnum::USERS_DELETE->value, parameters: ['user' => $user_b->id]);
         $this->actingAs($user_a);
-        $result = $this->getJson($uri);
+        $result = $this->deleteJson($uri);
         $result->assertStatus(403);
     }
 }

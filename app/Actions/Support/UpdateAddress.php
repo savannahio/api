@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Auth;
+namespace App\Actions\Support;
 
 use App\Models\Support\Address;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -24,20 +24,6 @@ class UpdateAddress
         $address->save();
 
         return $address;
-    }
-
-    public function asController(Address $address): Address
-    {
-        return $this->handle(
-            address: $address,
-            name: request()->input('name'),
-            street1: request()->input('street1'),
-            city: request()->input('city'),
-            state: request()->input('state'),
-            zip: request()->input('zip'),
-            country: request()->input('country'),
-            street2: request()->input('street2'),
-        );
     }
 
     public function rules(): array

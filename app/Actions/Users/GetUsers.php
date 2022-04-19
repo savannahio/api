@@ -22,7 +22,7 @@ class GetUsers
         $qb = User::query();
         $qb->orderBy($order_by, $direction->value);
 
-        return $qb->paginate($per_page, ['*'], 'page', $page);
+        return $qb->paginate($per_page, ['users.*'], 'page', $page);
     }
 
     public function asController(): LengthAwarePaginator
@@ -39,8 +39,7 @@ class GetUsers
 
     public function rules(): array
     {
-        return [
-            ...$this->getPageValidationRules(),
-        ];
+        return array_merge([
+        ], $this->getPageValidationRules());
     }
 }

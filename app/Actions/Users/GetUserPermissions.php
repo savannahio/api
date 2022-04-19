@@ -4,41 +4,26 @@ declare(strict_types=1);
 
 namespace App\Actions\Users;
 
-use App\Models\Support\Enum\DirectionEnum;
-use App\Models\Support\Traits\HasPaginatedInput;
+use App\Models\ACL\Permission;
 use App\Models\Users\User;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class GetUserPermissions
 {
     use AsAction;
-    use HasPaginatedInput;
 
-    public function handle(User $user, ?int $page = 1, ?int $per_page = 20, ?DirectionEnum $direction = DirectionEnum::ASC): LengthAwarePaginator
+    /** @return Collection|Permission[] */
+    public function handle(User $user): Collection|array
     {
-        $qb = $user->permissions()->getQuery();
-        $qb->orderBy('permissions.id', $direction->value);
-
-        return $qb->paginate($per_page, ['*'], 'page', $page);
+        return $user->permissions;
     }
 
-    public function asController(User $user): LengthAwarePaginator
+    /** @return Collection|Permission[] */
+    public function asController(User $user): Collection|array
     {
         request()->user()->canViewUserPermissions($user, true);
 
-        return $this->handle(
-            user: $user,
-            page: $this->getPageInput(),
-            per_page: $this->getPerPageInput(),
-            direction: $this->getDirectionInput()
-        );
-    }
-
-    public function rules(): array
-    {
-        return [
-            ...$this->getPageValidationRules(),
-        ];
+        return $this->handle($user);
     }
 }

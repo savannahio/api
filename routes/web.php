@@ -7,8 +7,12 @@ use App\Actions\Web\GetApiDocumentation;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Support\Facades\Route;
 
-Route::get('api/documentation', GetApiDocumentation::class)
-    ->name(RouteEnum::API_DOCUMENTATION->value)
+Route::middleware(['auth:sanctum'])
+    ->group(function (): void {
+        Route::get('api/documentation', GetApiDocumentation::class)
+            ->name(RouteEnum::API_DOCUMENTATION->value)
+        ;
+    })
 ;
 
 Route::prefix('auth')

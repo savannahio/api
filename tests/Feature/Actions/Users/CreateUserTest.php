@@ -6,13 +6,13 @@ namespace Tests\Feature\Actions\Users;
 
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class CreateUserTest extends TestCase
+final class CreateUserTest extends FeatureTestCase
 {
     use RefreshDatabase;
 
@@ -29,8 +29,8 @@ final class CreateUserTest extends TestCase
             'password' => 'testasdf',
             'password_confirmation' => 'testasdf',
         ];
-
-        $result = $this->postJson(route(RouteEnum::USERS_CREATE->value), $request);
+        $uri = route(name: RouteEnum::USERS_CREATE->value);
+        $result = $this->postJson($uri, $request);
         $result->assertStatus(201);
         $result->assertJsonStructure([
             'id', 'first_name', 'last_name', 'email',
@@ -50,8 +50,8 @@ final class CreateUserTest extends TestCase
             'password' => 'testasdf',
             'password_confirmation' => 'asdfasdf',
         ];
-
-        $result = $this->postJson(route(RouteEnum::USERS_CREATE->value), $request);
+        $uri = route(name: RouteEnum::USERS_CREATE->value);
+        $result = $this->postJson($uri, $request);
         $result->assertStatus(422);
         $result->assertJsonStructure(['message', 'errors' => ['password']]);
     }
@@ -63,8 +63,8 @@ final class CreateUserTest extends TestCase
     public function testRequiredFields(): void
     {
         $request = [];
-
-        $result = $this->postJson(route(RouteEnum::USERS_CREATE->value), $request);
+        $uri = route(name: RouteEnum::USERS_CREATE->value);
+        $result = $this->postJson($uri, $request);
         $result->assertStatus(422);
         $result->assertJsonStructure(
             ['message',

@@ -5,28 +5,27 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\PersonalAccessTokens;
 
 use App\Actions\PersonalAccessTokens\CreatePersonalAccessToken;
-use App\Actions\PersonalAccessTokens\DeletePersonalAccessToken;
+use App\Actions\PersonalAccessTokens\GetPersonalAccessTokens;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Tests\Unit\UnitTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class DeletePersonalAccessTokenTest extends TestCase
+final class GetPersonalAccessTokensTest extends UnitTestCase
 {
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\PersonalAccessTokens\DeletePersonalAccessToken::handle
+     * @covers \App\Actions\PersonalAccessTokens\GetPersonalAccessTokens::handle
      */
     public function testHandle(): void
     {
-        $name = 'asdfas';
         $user = parent::createUser();
-        $new_access_token = CreatePersonalAccessToken::make()->handle($user, $name);
-        DeletePersonalAccessToken::make()->handle($user, $new_access_token->accessToken);
-        $token_results = $user->tokens()->where('name', '=', $name)->count();
-        static::assertSame(0, $token_results);
+        CreatePersonalAccessToken::make()->handle($user, 'asdfasdf');
+        $result = GetPersonalAccessTokens::make()->handle($user);
+        static::assertInstanceOf(LengthAwarePaginator::class, $result);
     }
 }

@@ -6,32 +6,32 @@ namespace App\Actions\Payments;
 
 use App\Models\Support\Address;
 use App\Models\Users\User;
+use Config;
 use JetBrains\PhpStorm\ArrayShape;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Stripe\StripeClient;
-use Config;
 
-class UpdateCustomerAddress
+class UpdateCustomer
 {
     use AsAction;
 
-    public function handle(User $user, Address $address): void
+    public function handle(User $user): void
     {
-        \Log::info('env stuff ' . Config('app.env'));
-        \Log::info('customer id ' . $user->payments_id);
-        if ('testing' === Config('app.env')) {
+        if ('testing' === Config::get('app.env')) {
             return;
         }
 
         $stripe = new StripeClient(Config::get('services.stripe'));
-        $request = [
-            'address' => self::getAddressRequest($address)
-        ];
+        $request = CreateCustomer::make()->getCustomerRequest($user);
+        $default_address = $user->defaultAddress();
+        if (null !== $default_address) {
+            $request['address'] = self::getAddressRequest($default_address);
+        }
 
         $stripe->customers->update($user->payments_id, $request);
     }
 
-    #[ArrayShape(['city' => "string", 'country' => "string", 'line1' => "string", 'line2' => "null|string", 'postal_code' => "string", 'state' => "string"])]
+    #[ArrayShape(['city' => 'string', 'country' => 'string', 'line1' => 'string', 'line2' => 'null|string', 'postal_code' => 'string', 'state' => 'string'])]
     public function getAddressRequest(Address $address): array
     {
         return [

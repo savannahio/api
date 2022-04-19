@@ -4,63 +4,57 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Actions\Users;
 
-use App\Models\Support\Enum\PermissionEnum;
+use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class GetUserPermissionsTest extends TestCase
+final class SyncUserPermissionsTest extends FeatureTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @covers \App\Actions\Users\GetUserPermissions::asController
-     */
-    public function testSuccessfulApiCall(): void
+    public function testRequiresAuthentication(): void
     {
-        $user = parent::createUser();
-        $request = [
-            'user' => $user->id
-        ];
-        $this->actingAs($user);
-        $result = $this->getJson(route(RouteEnum::USERS_PERMISSIONS_LIST->value, $request));
-        $result->assertStatus(200);
+        $uri = route(name: RouteEnum::USERS_PERMISSIONS_UPDATE->value, parameters: ['user' => 2342]);
+        $result = $this->putJson($uri);
+        $result->assertStatus(401);
     }
 
     /**
-     * @covers \App\Actions\Users\GetUserPermissions::asController
-     * @covers \App\Actions\Users\GetUserPermissions::rules
+     * @covers \App\Actions\Users\SyncUserPermissions::asController
+     * @covers \App\Actions\Users\SyncUserPermissions::rules
      */
-    public function testCanViewOtherUserPermissions(): void
+    public function testCanUpdateOtherUserPermissions(): void
     {
-        $user_a = parent::createUser(permissions: [PermissionEnum::VIEW_USER_PERMISSIONS->value]);
+        $user_a = parent::createUser(permissions: [PermissionEnum::UPDATE_USER_PERMISSIONS->value]);
         $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
+        $uri = route(name: RouteEnum::USERS_PERMISSIONS_UPDATE->value, parameters: ['user' => $user_b->id]);
         $request = [
-            'user' => $user_b->id
+            'permissions' => [PermissionEnum::VIEW_API_DOCUMENTATION->value],
         ];
         $this->actingAs($user_a);
-        $result = $this->getJson(route(RouteEnum::USERS_PERMISSIONS_LIST->value, $request));
+        $result = $this->putJson($uri, $request);
         $result->assertStatus(200);
     }
 
     /**
-     * @covers \App\Actions\Users\GetUserPermissions::asController
-     * @covers \App\Actions\Users\GetUserPermissions::rules
+     * @covers \App\Actions\Users\SyncUserPermissions::asController
+     * @covers \App\Actions\Users\SyncUserPermissions::rules
      */
-    public function testCannotViewOtherUserPermissions(): void
+    public function testCannotUpdateOtherUserPermissions(): void
     {
         $user_a = parent::createUser();
         $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
+        $uri = route(name: RouteEnum::USERS_PERMISSIONS_UPDATE->value, parameters: ['user' => $user_b->id]);
         $request = [
-            'user' => $user_b->id
+            'permissions' => [PermissionEnum::VIEW_API_DOCUMENTATION->value],
         ];
         $this->actingAs($user_a);
-        $result = $this->getJson(route(RouteEnum::USERS_PERMISSIONS_LIST->value, $request));
+        $result = $this->putJson($uri, $request);
         $result->assertStatus(403);
     }
-
 }

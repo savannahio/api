@@ -1,30 +1,38 @@
 <?php
 
-namespace Tests\Unit\Notifications\User;
+declare(strict_types=1);
 
-use App\Actions\Auth\ResetPassword;
-use App\Notifications\User\ResetPasswordNotification;
+namespace Tests\Unit\Notifications\Users;
+
+use App\Notifications\Users\ResetPasswordNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Unit\UnitTestCase;
 use Notification;
+use Tests\Unit\UnitTestCase;
 
-class ResetPasswordNotificationTest extends UnitTestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class ResetPasswordNotificationTest extends UnitTestCase
 {
-
     use RefreshDatabase;
 
     /**
-     * @covers \App\Notifications\User\ResetPasswordNotification::via
-     * @covers \App\Notifications\User\ResetPasswordNotification::toMail
+     * @covers \App\Notifications\Users\ResetPasswordNotification::toMail
+     * @covers \App\Notifications\Users\ResetPasswordNotification::via
      */
-    public function testChannels(): void
+    public function testSuccessfulNotification(): void
     {
         Notification::fake();
         $user = parent::createUser(password: 'zzzzzzzzz');
-        ResetPassword::make()->handle($user, 'asdfasdfadsasdf');
-        Notification::assertSentTo($user, ResetPasswordNotification::class, function (ResetPasswordNotification $notification, $channels) {
-            return in_array('mail', $channels);
+        $user->notify(new ResetPasswordNotification());
+        Notification::assertSentTo($user, ResetPasswordNotification::class, function (ResetPasswordNotification $notification, $channels) use ($user) {
+            $mailData = $notification->toMail($user);
+            $this->assertSame('Password Reset', $mailData->subject);
+            $this->assertStringContainsString('Your password was just reset.', $mailData->render()->__toString());
+            $this->assertTrue(\in_array('mail', $channels, true));
+
+            return true;
         });
     }
-
 }

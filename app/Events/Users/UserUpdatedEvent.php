@@ -9,7 +9,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserUpdatedDefaultAddressEvent
+class UserUpdatedEvent
 {
     use Dispatchable;
     use InteractsWithSockets;

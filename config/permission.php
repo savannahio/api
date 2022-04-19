@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Models\Support\Permission;
-use App\Models\Support\Role;
+use App\Models\ACL\Permission;
+use App\Models\ACL\Role;
 
 return [
     'models' => [

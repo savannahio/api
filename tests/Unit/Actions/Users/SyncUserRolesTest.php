@@ -4,42 +4,40 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Users;
 
-use App\Actions\Users\SyncUserPermissions;
-use App\Models\Support\Enum\PermissionEnum;
-use App\Models\Support\Permission;
+use App\Actions\Users\SyncUserRoles;
+use App\Models\ACL\Enum\RoleEnum;
+use App\Models\ACL\Role;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\UnitTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class SyncUserPermissionsTest extends TestCase
+final class SyncUserRolesTest extends UnitTestCase
 {
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Users\SyncUserPermissions::handle
+     * @covers \App\Actions\Users\SyncUserRoles::handle
      */
     public function testSuccess(): void
     {
         $user = parent::createUser();
-        $permissions = SyncUserPermissions::make()->handle($user, [PermissionEnum::VIEW_API_DOCUMENTATION->value]);
-        self::assertInstanceOf(Collection::class, $permissions);
-        self::assertInstanceOf(Permission::class, $permissions[0]);
+        $roles = SyncUserRoles::make()->handle($user, [RoleEnum::DEVELOPER->value]);
+        static::assertInstanceOf(Collection::class, $roles);
+        static::assertInstanceOf(Role::class, $roles[0]);
     }
 
     /**
-     * @covers \App\Actions\Users\SyncUserPermissions::handle
+     * @covers \App\Actions\Users\SyncUserRoles::handle
      */
-    public function testRemoveAllPermissions(): void
+    public function testRemoveAllRoles(): void
     {
-        $user = parent::createUser(permissions: [PermissionEnum::VIEW_API_DOCUMENTATION->value]);
-        $permissions = SyncUserPermissions::make()->handle($user, []);
-        self::assertInstanceOf(Collection::class, $permissions);
-        self::assertEquals(0, $permissions->count());
+        $user = parent::createUser(roles: [RoleEnum::DEVELOPER->value]);
+        $roles = SyncUserRoles::make()->handle($user, []);
+        static::assertInstanceOf(Collection::class, $roles);
+        static::assertSame(0, $roles->count());
     }
-
-
 }

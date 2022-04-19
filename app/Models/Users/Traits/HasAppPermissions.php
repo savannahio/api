@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models\Users\Traits;
 
-use App\Models\Support\Enum\PermissionEnum;
+use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\Users\User;
 use Spatie\Permission\Exceptions\UnauthorizedException;
 
@@ -15,11 +15,54 @@ trait HasAppPermissions
         return $this->id === $user->id;
     }
 
-    public function canShowUsers($throws = false): bool
+    public function canViewApiDocumentation($throws = false): bool
     {
-        $condition = !$this->hasPermissionTo(PermissionEnum::SHOW_USERS->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::SHOW_USERS->name]);
+        $condition = $this->hasPermissionTo(PermissionEnum::VIEW_API_DOCUMENTATION->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_API_DOCUMENTATION->value]);
+        }
+
+        return $condition;
+    }
+
+    public function canViewHorizon($throws = false): bool
+    {
+        $condition = $this->hasPermissionTo(PermissionEnum::VIEW_HORIZON->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_HORIZON->value]);
+        }
+
+        return $condition;
+    }
+
+    public function canViewTelescope($throws = false): bool
+    {
+        $condition = $this->hasPermissionTo(PermissionEnum::VIEW_TELESCOPE->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_TELESCOPE->value]);
+        }
+
+        return $condition;
+    }
+
+    public function canShowUsers(User $user, $throws = false): bool
+    {
+        $condition = $this->isUser($user);
+        if (!$condition) {
+            $condition = $this->hasPermissionTo(PermissionEnum::SHOW_USERS->value);
+            if (!$condition && $throws) {
+                throw UnauthorizedException::forPermissions([PermissionEnum::SHOW_USERS->value]);
+            }
+        }
+
+        return $condition;
+    }
+
+    public function canDeleteUsers($throws = false): bool
+    {
+        $condition = $this->hasPermissionTo(PermissionEnum::DELETE_USERS->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::DELETE_USERS->value]);
         }
 
         return $condition;
@@ -27,9 +70,9 @@ trait HasAppPermissions
 
     public function canViewUsers($throws = false): bool
     {
-        $condition = !$this->hasPermissionTo(PermissionEnum::VIEW_USERS->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_USERS->name]);
+        $condition = $this->hasPermissionTo(PermissionEnum::VIEW_USERS->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_USERS->value]);
         }
 
         return $condition;
@@ -37,9 +80,9 @@ trait HasAppPermissions
 
     public function canViewPermissions($throws = false): bool
     {
-        $condition = !$this->hasPermissionTo(PermissionEnum::VIEW_PERMISSIONS->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_PERMISSIONS->name]);
+        $condition = $this->hasPermissionTo(PermissionEnum::VIEW_PERMISSIONS->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_PERMISSIONS->value]);
         }
 
         return $condition;
@@ -47,9 +90,35 @@ trait HasAppPermissions
 
     public function canViewRoles($throws = false): bool
     {
-        $condition = !$this->hasPermissionTo(PermissionEnum::VIEW_ROLES->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_ROLES->name]);
+        $condition = $this->hasPermissionTo(PermissionEnum::VIEW_ROLES->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_ROLES->value]);
+        }
+
+        return $condition;
+    }
+
+    public function canViewUserAddresses(User $user, $throws = false): bool
+    {
+        $condition = $this->isUser($user);
+        if (!$condition) {
+            $condition = $this->hasPermissionTo(PermissionEnum::VIEW_USER_ADDRESSES->value);
+            if (!$condition && $throws) {
+                throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_USER_ADDRESSES->value]);
+            }
+        }
+
+        return $condition;
+    }
+
+    public function canUpdateUserAddresses(User $user, $throws = false): bool
+    {
+        $condition = $this->isUser($user);
+        if (!$condition) {
+            $condition = $this->hasPermissionTo(PermissionEnum::UPDATE_USER_ADDRESSES->value);
+            if (!$condition && $throws) {
+                throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USER_ADDRESSES->value]);
+            }
         }
 
         return $condition;
@@ -57,9 +126,22 @@ trait HasAppPermissions
 
     public function canViewUserPermissions(User $user, $throws = false): bool
     {
-        $condition = !$this->isUser($user) && !$this->hasPermissionTo(PermissionEnum::UPDATE_USER_PERMISSIONS->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USER_PERMISSIONS->name]);
+        $condition = $this->isUser($user);
+        if (!$condition) {
+            $condition = $this->hasPermissionTo(PermissionEnum::VIEW_USER_PERMISSIONS->value);
+            if (!$condition && $throws) {
+                throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_USER_PERMISSIONS->value]);
+            }
+        }
+
+        return $condition;
+    }
+
+    public function canUpdateUserPermissions($throws = false): bool
+    {
+        $condition = $this->hasPermissionTo(PermissionEnum::UPDATE_USER_PERMISSIONS->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USER_PERMISSIONS->value]);
         }
 
         return $condition;
@@ -67,29 +149,22 @@ trait HasAppPermissions
 
     public function canViewUserRoles(User $user, $throws = false): bool
     {
-        $condition = !$this->isUser($user) && !$this->hasPermissionTo(PermissionEnum::VIEW_USER_ROLES->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_USER_ROLES->name]);
+        $condition = $this->isUser($user);
+        if (!$condition) {
+            $condition = $this->hasPermissionTo(PermissionEnum::VIEW_USER_ROLES->value);
+            if (!$condition && $throws) {
+                throw UnauthorizedException::forPermissions([PermissionEnum::VIEW_USER_ROLES->value]);
+            }
         }
 
         return $condition;
     }
 
-    public function canUpdateUserPermissions(User $user, $throws = false): bool
+    public function canUpdateUserRoles($throws = false): bool
     {
-        $condition = !$this->isUser($user) && !$this->hasPermissionTo(PermissionEnum::UPDATE_USER_PERMISSIONS->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USER_PERMISSIONS->name]);
-        }
-
-        return $condition;
-    }
-
-    public function canUpdateUserRoles(User $user, $throws = false): bool
-    {
-        $condition = !$this->isUser($user) && !$this->hasPermissionTo(PermissionEnum::UPDATE_USER_ROLES->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USER_ROLES->name]);
+        $condition = $this->hasPermissionTo(PermissionEnum::UPDATE_USER_ROLES->value);
+        if (!$condition && $throws) {
+            throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USER_ROLES->value]);
         }
 
         return $condition;
@@ -97,9 +172,12 @@ trait HasAppPermissions
 
     public function canUpdateUser(User $user, $throws = false): bool
     {
-        $condition = !$this->isUser($user) && !$this->hasPermissionTo(PermissionEnum::UPDATE_USERS->value);
-        if ($condition && $throws) {
-            throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USERS->name]);
+        $condition = $this->isUser($user);
+        if (!$condition) {
+            $condition = $this->hasPermissionTo(PermissionEnum::UPDATE_USERS->value);
+            if (!$condition && $throws) {
+                throw UnauthorizedException::forPermissions([PermissionEnum::UPDATE_USERS->value]);
+            }
         }
 
         return $condition;

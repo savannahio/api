@@ -4,73 +4,49 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Users;
 
-use App\Actions\Users\CreateUser;
-use App\Events\Users\UserRegisteredEvent;
+use App\Actions\Users\UpdateUser;
+use App\Events\Users\UserUpdatedEmailEvent;
 use App\Listeners\UserListener;
-use App\Models\Support\Enum\PermissionEnum;
-use App\Models\Support\Enum\RoleEnum;
-use App\Models\Support\Permission;
-use App\Models\Support\Role;
 use App\Models\Users\User;
 use Event;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\UnitTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class CreateUserTest extends TestCase
+final class UpdateUserTest extends UnitTestCase
 {
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Users\CreateUser::handle
+     * @covers \App\Actions\Users\UpdateUser::handle
      */
-    public function testSuccessfulUserCreation(): void
+    public function testSuccessfulUpdate(): void
     {
-        $user = parent::createUser();
-        static::assertInstanceOf(User::class, $user);
+        $first_name = 'first';
+        $last_name = 'last';
+        $email = 'jon.doe@asdf.com';
+        $user = User::factory()->create(['first_name' => $first_name, 'last_name' => $last_name, 'email' => $email]);
+        $user = UpdateUser::make()->handle($user, first_name: 'asdfasfasdfasdf', last_name: 'asdfasdf', email: 'asd@asdfasdf.com');
+        static::assertNotSame($first_name, $user->first_name);
+        static::assertNotSame($last_name, $user->last_name);
+        static::assertNotSame($email, $user->email);
     }
 
     /**
-     * @covers \App\Actions\Users\CreateUser::handle
-     * @covers \App\Events\Users\UserRegisteredEvent
+     * @covers \App\Actions\Users\UpdateUser::handle
      */
-    public function testCreationEvents(): void
+    public function testEventsDoNotFireWhenSameEmail(): void
     {
-        $this->expectsEvents([UserRegisteredEvent::class]);
-        parent::createUser();
-        Event::assertDispatched(UserListener::class);
-        Event::assertDispatched(VerifyEmail::class);
-    }
+        $email = 'john.doe@asdf.com';
+        $this->doesntExpectEvents([UserUpdatedEmailEvent::class]);
+        $user = User::factory()->create(['email' => $email]);
+        UpdateUser::make()->handle($user, email: $email);
 
-    /**
-     * @covers \App\Actions\Users\CreateUser::handle
-     */
-    public function testSuccessfulUserCreationWithRolesAndPermissions(): void
-    {
-        $user = CreateUser::make()->handle('first', 'last', 'test@test.com', 'testasdf', [RoleEnum::ADMIN->value], [PermissionEnum::VIEW_PERMISSIONS->value]);
-        static::assertInstanceOf(User::class, $user);
-        static::assertSame(1, $user->roles()->count());
-        static::assertSame(1, $user->permissions()->count());
-        static::assertInstanceOf(Role::class, $user->roles[0]);
-        static::assertInstanceOf(Permission::class, $user->permissions[0]);
-    }
-
-    /**
-     * @covers \App\Actions\Users\CreateUser::asCommand
-     */
-    public function testConsoleCommand(): void
-    {
-        $this->artisan('users:create', [
-            'first_name' => 'first',
-            'last_name' => 'last',
-            'email' => 'test@test.com',
-            'password' => 'testasdf',
-        ])
-            ->assertSuccessful()
-        ;
+        Event::assertNotDispatched(UserListener::class);
+        Event::assertNotDispatched(VerifyEmail::class);
     }
 }

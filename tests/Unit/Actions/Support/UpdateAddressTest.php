@@ -1,23 +1,30 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Actions\Support;
 
 use App\Actions\Support\CreateAddress;
+use App\Actions\Support\UpdateAddress;
 use App\Models\Support\Address;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\UnitTestCase;
 
-class CreateAddressTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class UpdateAddressTest extends UnitTestCase
 {
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Support\CreateAddress::handle
+     * @covers \App\Actions\Support\UpdateAddress::make
      */
-    public function testCreation(): void
+    public function testHandle(): void
     {
         $request = Address::factory()->make()->toArray();
-        $address = CreateAddress::make()->handle(
+        $address_create = CreateAddress::make()->handle(
             name: $request['name'],
             street1: $request['street1'],
             city: $request['city'],
@@ -26,6 +33,16 @@ class CreateAddressTest extends TestCase
             country: $request['country'],
             street2: $request['street2'],
         );
-        $this->assertInstanceOf(Address::class, $address);
+        $address_update = UpdateAddress::make()->handle(
+            address: $address_create,
+            name: $address_create->name,
+            street1: $address_create->street1,
+            city: $address_create->city,
+            state: $address_create->state,
+            zip: $address_create->zip,
+            country: $address_create->country,
+            street2: $address_create->street2,
+        );
+        static::assertInstanceOf(Address::class, $address_update);
     }
 }

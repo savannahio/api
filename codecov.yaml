@@ -1,0 +1,4 @@
+codecov:
+  token: "b297e7df-8c76-4ab4-aeb2-69201acae7ef"
+fixes:
+  - "/var/www/html/api::/api"

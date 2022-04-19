@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Users;
 
-use App\Models\Support\Enum\RoleEnum;
-use App\Models\Support\Role;
+use App\Models\ACL\Enum\RoleEnum;
+use App\Models\ACL\Role;
 use App\Models\Users\User;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
@@ -29,7 +29,7 @@ class SyncUserRoles
 
     public function asController(User $user): Collection|array
     {
-        request()->user()->canUpdateUserRoles($user, true);
+        request()->user()->canUpdateUserRoles(true);
 
         return $this->handle(
             user: $user,

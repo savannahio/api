@@ -19,9 +19,8 @@ class VerifyEmail
             throw new BadRequestHttpException('Email has already been verified');
         }
 
-        if ($user->markEmailAsVerified()) {
-            event(new Verified($user));
-        }
+        $user->markEmailAsVerified();
+        event(new Verified($user));
 
         return $user;
     }
@@ -29,6 +28,7 @@ class VerifyEmail
     public function asController(): User
     {
         $user = User::findOrFail(request()->route('id'));
+        $user->sendEmailVerificationNotification();
 
         return $this->handle($user);
     }

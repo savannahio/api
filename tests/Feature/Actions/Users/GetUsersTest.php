@@ -4,55 +4,48 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Actions\Users;
 
-use App\Models\Support\Enum\PermissionEnum;
+use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class ShowUserTest extends TestCase
+final class GetUsersTest extends FeatureTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @covers \App\Actions\Users\ShowUser::asController
-     */
-    public function testSuccessfulApiCall(): void
+    public function testRequiresAuthentication(): void
     {
-        $user = parent::createUser();
-        $uri = route(RouteEnum::USERS_SHOW->value, ['user' => $user->id]);
+        $uri = route(name: RouteEnum::USERS_LIST->value);
+        $result = $this->getJson($uri);
+        $result->assertStatus(401);
+    }
+
+    /**
+     * @covers \App\Actions\Users\GetUsers::asController
+     */
+    public function testCanListUsers(): void
+    {
+        $user = parent::createUser(permissions: [PermissionEnum::VIEW_USERS->value]);
+        $uri = route(name: RouteEnum::USERS_LIST->value);
         $this->actingAs($user);
         $result = $this->getJson($uri);
         $result->assertStatus(200);
     }
 
     /**
-     * @covers \App\Actions\Users\ShowUser::asController
+     * @covers \App\Actions\Users\GetUsers::asController
+     * @covers \App\Actions\Users\GetUsers::rules
      */
-    public function testCanViewOtherUserPermissions(): void
+    public function testCannotListUsers(): void
     {
-        $user_a = parent::createUser(permissions: [PermissionEnum::SHOW_USERS->value]);
-        $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
-        $uri = route(RouteEnum::USERS_SHOW->value, ['user' => $user_b->id]);
-        $this->actingAs($user_a);
-        $result = $this->getJson($uri);
-        $result->assertStatus(200);
-    }
-
-    /**
-     * @covers \App\Actions\Users\ShowUser::asController
-     */
-    public function testCannotViewOtherUserPermissions(): void
-    {
-        $user_a = parent::createUser();
-        $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
-        $uri = route(RouteEnum::USERS_SHOW->value, ['user' => $user_b->id]);
-        $this->actingAs($user_a);
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::USERS_LIST->value);
+        $this->actingAs($user);
         $result = $this->getJson($uri);
         $result->assertStatus(403);
     }
-
 }

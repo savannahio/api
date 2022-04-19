@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories\Users;
 
+use Hash;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
@@ -18,7 +19,7 @@ class UserFactory extends Factory
             'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => Hash::make($this->faker->password),
             'remember_token' => Str::random(10),
         ];
     }

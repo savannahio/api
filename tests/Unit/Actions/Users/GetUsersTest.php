@@ -4,29 +4,26 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Actions\Users;
 
-use App\Actions\Users\ShowUser;
-use App\Models\Users\User;
+use App\Actions\Users\GetUsers;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Unit\UnitTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class ShowUserTest extends TestCase
+final class GetUsersTest extends UnitTestCase
 {
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Users\ShowUser::handle
+     * @covers \App\Actions\Users\GetUsers::handle
      */
     public function testSuccess(): void
     {
-        $user_a = parent::createUser(email: 'asdfasdf@sadfasdf.com');
-        $user_b = ShowUser::make()->handle($user_a);
-        self::assertInstanceOf(User::class, $user_b);
-        self::assertEquals($user_a->id, $user_b->id);
+        parent::createUser();
+        $users = GetUsers::make()->handle();
+        static::assertInstanceOf(LengthAwarePaginator::class, $users);
     }
-
-
 }

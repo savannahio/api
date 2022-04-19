@@ -14,14 +14,19 @@ class ResetPassword
 
     public function handle(User $user, string $password): void
     {
-        $user->setPassword($password);
-        $user->save();
-        event(new ResetPasswordEvent($user));
+        if (!$user->newPasswordEquals($password)) {
+            $user->setPassword($password);
+            $user->save();
+            ResetPasswordEvent::dispatch($user);
+        }
     }
 
     public function asController(): void
     {
-        $this->handle(request()->user(), request()->input('new_password'));
+        $this->handle(
+            user: request()->user(),
+            password: request()->input('new_password')
+        );
     }
 
     public function rules(): array

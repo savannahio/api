@@ -1,39 +1,62 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Actions\Auth;
 
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
-final class GetAuthUserTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class LoginTest extends FeatureTestCase
 {
-
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\Auth\GetAuthUser::asController
+     * @covers \App\Actions\Auth\Login::asController
+     * @covers \App\Actions\Auth\Login::handle
      */
-    public function testSuccessfulGet(): void
+    public function testSuccess(): void
     {
-        $user = parent::createUser();
-        $this->actingAs($user);
-        $result = $this->getJson(route(RouteEnum::USERS_ME->value));
+        $password = 'asdfasdfasdf';
+        $user = parent::createUser(password: $password);
+        $uri = route(name: RouteEnum::AUTH_LOGIN->value);
+        $request = [
+            'email' => $user->email,
+            'password' => $password,
+        ];
+        $result = $this->postJson($uri, $request);
         $result->assertStatus(200);
-        $result->assertJsonStructure([
-            'id', 'first_name', 'last_name', 'email', 'meta' => ['is_email_verified'], 'roles', 'permissions'
-        ], $result->json());
     }
 
     /**
-     * @covers \App\Actions\Auth\GetAuthUser::asController
+     * @covers \App\Actions\Auth\Login::handle
+     * @covers \App\Actions\Auth\Login::rules
      */
     public function testUnauthorized(): void
     {
-        $result = $this->getJson(route(RouteEnum::USERS_ME->value));
+        $uri = route(name: RouteEnum::AUTH_LOGIN->value);
+        $request = [
+            'email' => 'asdfasdf@ddfa.com',
+            'password' => 'asdfasdfasdfasdf',
+        ];
+        $result = $this->postJson($uri, $request);
         $result->assertStatus(401);
-        $result->assertExactJson([
-            'message' => 'Unauthenticated.'
-        ]);
+    }
+
+    /**
+     * @covers \App\Actions\Auth\Login::rules
+     */
+    public function testValidation(): void
+    {
+        $uri = route(name: RouteEnum::AUTH_LOGIN->value);
+        $request = [];
+        $result = $this->postJson($uri, $request);
+        $response = $result->assertStatus(422);
+        $result->assertJsonStructure(['message', 'errors' => ['email', 'password']], $response->json());
     }
 }

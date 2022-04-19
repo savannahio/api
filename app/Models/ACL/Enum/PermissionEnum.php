@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Support\Enum;
+namespace App\Models\ACL\Enum;
 
 use App\Models\Support\Traits\HasEnumCases;
 

@@ -4,30 +4,38 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Actions\Users;
 
-use App\Models\Support\Enum\PermissionEnum;
+use App\Models\ACL\Enum\PermissionEnum;
+use App\Models\ACL\Enum\RoleEnum;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use Tests\Feature\FeatureTestCase;
 
 /**
  * @internal
  * @coversNothing
  */
-final class SyncUserPermissionsTest extends TestCase
+final class SyncUserRolesTest extends FeatureTestCase
 {
     use RefreshDatabase;
 
-    /**
-     * @covers \App\Actions\Users\SyncUserPermissions::asController
-     * @covers \App\Actions\Users\SyncUserPermissions::rules
-     */
-    public function testCanUpdateOtherUserPermissions(): void
+    public function testRequiresAuthentication(): void
     {
-        $user_a = parent::createUser(permissions: [PermissionEnum::UPDATE_USER_PERMISSIONS->value]);
+        $uri = route(name: RouteEnum::USERS_ROLES_UPDATE->value, parameters: ['user' => 2343]);
+        $result = $this->putJson($uri);
+        $result->assertStatus(401);
+    }
+
+    /**
+     * @covers \App\Actions\Users\SyncUserRoles::asController
+     * @covers \App\Actions\Users\SyncUserRoles::rules
+     */
+    public function testCanUpdateOtherUserRoles(): void
+    {
+        $user_a = parent::createUser(permissions: [PermissionEnum::UPDATE_USER_ROLES->value]);
         $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
-        $uri = route(RouteEnum::USERS_PERMISSIONS_UPDATE->value, ['user' => $user_b->id]);
+        $uri = route(name: RouteEnum::USERS_ROLES_UPDATE->value, parameters: ['user' => $user_b->id]);
         $request = [
-            'permissions' => [PermissionEnum::VIEW_API_DOCUMENTATION->value]
+            'roles' => [RoleEnum::DEVELOPER->value],
         ];
         $this->actingAs($user_a);
         $result = $this->putJson($uri, $request);
@@ -35,20 +43,36 @@ final class SyncUserPermissionsTest extends TestCase
     }
 
     /**
-     * @covers \App\Actions\Users\SyncUserPermissions::asController
-     * @covers \App\Actions\Users\SyncUserPermissions::rules
+     * @covers \App\Actions\Users\SyncUserRoles::asController
+     * @covers \App\Actions\Users\SyncUserRoles::rules
      */
-    public function testCannotUpdateOtherUserPermissions(): void
+    public function testValidationFailure(): void
+    {
+        $user_a = parent::createUser(permissions: [PermissionEnum::UPDATE_USER_ROLES->value]);
+        $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
+        $uri = route(name: RouteEnum::USERS_ROLES_UPDATE->value, parameters: ['user' => $user_b->id]);
+        $request = [
+            'roles' => ['asdfasfd', 'asdfasdf'],
+        ];
+        $this->actingAs($user_a);
+        $result = $this->putJson($uri, $request);
+        $result->assertStatus(422);
+    }
+
+    /**
+     * @covers \App\Actions\Users\SyncUserRoles::asController
+     * @covers \App\Actions\Users\SyncUserRoles::rules
+     */
+    public function testCannotUpdateOtherUserRoles(): void
     {
         $user_a = parent::createUser();
         $user_b = parent::createUser(email: 'asdjdfkeas@asdf.com');
-        $uri = route(RouteEnum::USERS_PERMISSIONS_UPDATE->value, ['user' => $user_b->id]);
+        $uri = route(name: RouteEnum::USERS_ROLES_UPDATE->value, parameters: ['user' => $user_b->id]);
         $request = [
-            'permissions' => [PermissionEnum::VIEW_API_DOCUMENTATION->value]
+            'roles' => [RoleEnum::DEVELOPER->value],
         ];
         $this->actingAs($user_a);
         $result = $this->putJson($uri, $request);
         $result->assertStatus(403);
     }
-
 }

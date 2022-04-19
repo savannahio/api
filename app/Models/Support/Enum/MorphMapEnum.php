@@ -6,11 +6,13 @@ namespace App\Models\Support\Enum;
 
 use App\Models\Support\Traits\HasEnumCases;
 
-enum DirectionEnum: string
+enum MorphMapEnum: int
 {
     use HasEnumCases;
 
-    case ASC = 'asc';
+    case USER = 1;
 
-    case DESC = 'desc';
+    case PERMISSION = 2;
+
+    case ROLE = 3;
 }

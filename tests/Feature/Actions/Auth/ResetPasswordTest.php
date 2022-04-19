@@ -1,33 +1,74 @@
 <?php
 
-namespace Tests\Unit\Actions\Auth;
+declare(strict_types=1);
 
-use App\Actions\Auth\ResetPassword;
-use App\Actions\Users\CreateUser;
-use App\Events\Users\ResetPasswordEvent;
-use App\Listeners\UserListener;
-use App\Notifications\User\ResetPasswordNotification;
+namespace Tests\Feature\Actions\Auth;
+
+use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use Event;
+use Tests\Feature\FeatureTestCase;
 
-final class ResetPasswordTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class ResetPasswordTest extends FeatureTestCase
 {
-
     use RefreshDatabase;
 
-    /**
-     * @covers \App\Actions\Auth\ResetPassword::handle
-     * @covers \App\Events\Users\ResetPasswordEvent
-     * @covers \App\Listeners\UserListener::resetPassword
-     */
-    public function testSuccessfulUserCreation(): void
+    public function testRequiresAuthentication(): void
     {
-        $this->expectsEvents([ResetPasswordEvent::class]);
-        $user = CreateUser::make()->handle('first', 'last', 'test@test.com', 'testasdf');
-        ResetPassword::make()->handle($user, 'asdfasdfadsasdf');
-        Event::assertDispatched(UserListener::class);
-        Event::assertDispatched(ResetPasswordNotification::class);
+        $uri = route(name: RouteEnum::AUTH_RESET_PASSWORD->value);
+        $result = $this->postJson($uri);
+        $result->assertStatus(401);
+    }
 
+    /**
+     * @covers \App\Actions\Auth\ResetPassword::asController
+     */
+    public function testResetPasswordApi(): void
+    {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::AUTH_RESET_PASSWORD->value);
+        $this->actingAs($user);
+        $request = [
+            'new_password' => 'asdfasfasdfasfd',
+            'new_password_confirmation' => 'asdfasfasdfasfd',
+        ];
+        $result = $this->postJson($uri, $request);
+        $result->assertStatus(200);
+    }
+
+    /**
+     * @covers \App\Actions\Auth\ResetPassword::asController
+     * @covers \App\Actions\Auth\ResetPassword::rules
+     */
+    public function testResetPasswordApiPasswordMismatch(): void
+    {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::AUTH_RESET_PASSWORD->value);
+        $this->actingAs($user);
+        $request = [
+            'new_password' => 'asdfasfasdfasfd',
+            'new_password_confirmation' => 'asdf',
+        ];
+        $result = $this->postJson($uri, $request);
+        $result->assertStatus(422);
+    }
+
+    /**
+     * @covers \App\Actions\Auth\ResetPassword::asController
+     * @covers \App\Actions\Auth\ResetPassword::rules
+     */
+    public function testResetPasswordApiMissingConfirmation(): void
+    {
+        $user = parent::createUser();
+        $uri = route(name: RouteEnum::AUTH_RESET_PASSWORD->value);
+        $this->actingAs($user);
+        $request = [
+            'new_password' => 'asdfasfasdfasfd',
+        ];
+        $result = $this->postJson($uri, $request);
+        $result->assertStatus(422);
     }
 }

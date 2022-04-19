@@ -36,7 +36,13 @@ enum RouteEnum: string
 
     case USERS_SHOW = 'users.show';
 
+    case USERS_DELETE = 'users.delete';
+
     case USERS_UPDATE = 'users.update';
+
+    case USERS_DEFAULT_ADDRESS_SHOW = 'users.default_address.show';
+
+    case USERS_DEFAULT_ADDRESS_UPDATE = 'users.default_address.update';
 
     case USERS_ROLES_LIST = 'users.roles.list';
 

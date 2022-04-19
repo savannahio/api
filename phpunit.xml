@@ -5,7 +5,7 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="Unit">
+        <testsuite  name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
         <testsuite name="Feature">
@@ -16,15 +16,28 @@
         <include>
             <directory suffix=".php">./app</directory>
         </include>
+        <exclude>
+            <directory>./app/Console</directory>
+            <file>./app/Exceptions/Handler.php</file>
+            <directory>./app/Http</directory>
+            <directory>./app/Models/ACL/Enum</directory>
+            <directory>./app/Models/Support/Enum</directory>
+            <directory>./app/Providers</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="tests/reports/html"/>
+            <clover outputFile="tests/reports/clover.xml"/>
+        </report>
     </coverage>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
-        <!-- <env name="DB_CONNECTION" value="sqlite"/> -->
-        <!-- <env name="DB_DATABASE" value=":memory:"/> -->
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="QUEUE_DRIVER" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
     </php>

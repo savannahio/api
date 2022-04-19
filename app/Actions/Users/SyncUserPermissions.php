@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions\Users;
 
-use App\Models\Support\Enum\PermissionEnum;
-use App\Models\Support\Permission;
+use App\Models\ACL\Enum\PermissionEnum;
+use App\Models\ACL\Permission;
 use App\Models\Users\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Validation\Rule;
@@ -29,7 +29,7 @@ class SyncUserPermissions
 
     public function asController(User $user): Collection|array
     {
-        request()->user()->canUpdateUserPermissions($user, true);
+        request()->user()->canUpdateUserPermissions(true);
 
         return $this->handle(
             user: $user,

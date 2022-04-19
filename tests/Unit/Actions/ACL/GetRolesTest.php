@@ -1,34 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit\Actions\ACL;
 
-use App\Actions\ACL\GetPermissions;
+use App\Actions\ACL\GetRoles;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
-use TypeError;
+use Tests\Unit\UnitTestCase;
 
-final class GetPermissionsTest extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class GetRolesTest extends UnitTestCase
 {
-
     use RefreshDatabase;
 
     /**
-     * @covers \App\Actions\ACL\GetPermissions::handle
+     * @covers \App\Actions\ACL\GetRoles::handle
      */
     public function testSuccessfulGet(): void
     {
-        $result = GetPermissions::make()->handle(page: 3);
-        $this->assertInstanceOf(LengthAwarePaginator::class, $result);
+        $result = GetRoles::make()->handle(page: 3);
+        static::assertInstanceOf(LengthAwarePaginator::class, $result);
     }
-
-    /**
-     * @covers \App\Actions\ACL\GetPermissions::handle
-     */
-    public function testUnauthorized(): void
-    {
-        $this->expectException(TypeError::class);
-        GetPermissions::make()->handle(page: 'asdfasdf');
-    }
-
 }

@@ -20,7 +20,7 @@ class ShowUser
     #[Pure]
     public function asController(User $user): User
     {
-        request()->user()->canShowUsers(true);
+        request()->user()->canShowUsers($user, true);
 
         return $this->handle(
             $user,
