@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Users;
 
+use App\Events\Users\UserPermissionsUpdatedEvent;
 use App\Models\ACL\Enum\PermissionEnum;
 use App\Models\ACL\Permission;
 use App\Models\Users\User;
@@ -23,7 +24,7 @@ class SyncUserPermissions
     public function handle(User $user, array $permissions): Collection|array
     {
         $user->syncPermissions($permissions);
-
+        UserPermissionsUpdatedEvent::dispatch($user);
         return $user->permissions;
     }
 
@@ -40,7 +41,7 @@ class SyncUserPermissions
     public function rules(): array
     {
         return [
-            'permissions' => 'required|array',
+            'permissions' => ['present', 'array'],
             'permissions.*' => ['required', 'string', 'distinct', Rule::in(PermissionEnum::values())],
         ];
     }

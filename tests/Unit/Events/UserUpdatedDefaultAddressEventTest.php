@@ -37,6 +37,9 @@ final class UserUpdatedDefaultAddressEventTest extends UnitTestCase
             country: $request['country'],
             street2: $request['street2'],
         );
-        Event::assertDispatched(fn (UserUpdatedEvent $event) => $event->user->id === $user->id);
+        Event::assertDispatched(UserUpdatedEvent::class, function (UserUpdatedEvent $e) use ($user) {
+            $this->assertEquals($e->user->id, $user->id);
+            return $e->user->id === $user->id;
+        });
     }
 }

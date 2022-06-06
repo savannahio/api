@@ -22,14 +22,8 @@ use App\Actions\Users\SyncUserPermissions;
 use App\Actions\Users\SyncUserRoles;
 use App\Actions\Users\UpdateUser;
 use App\Actions\Users\UpdateUserDefaultAddress;
-use App\Actions\Users\VerifyEmail;
 use App\Models\Support\Enum\RouteEnum;
 use Illuminate\Support\Facades\Route;
-
-Route::middleware(['signed', 'throttle:6,1'])
-    ->get('/email/verify/{id}/{hash}', VerifyEmail::class)
-    ->name(RouteEnum::EMAIL_VERIFICATION->value)
-;
 
 Route::prefix('auth')
     ->group(function (): void {

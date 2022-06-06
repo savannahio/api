@@ -8,6 +8,7 @@ use App\Actions\Auth\ResetPassword;
 use App\Events\Users\ResetPasswordEvent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Unit\UnitTestCase;
+use Event;
 
 /**
  * @internal
@@ -22,8 +23,12 @@ final class ResetPasswordEventTest extends UnitTestCase
      */
     public function testEvents(): void
     {
-        $this->expectsEvents([ResetPasswordEvent::class]);
+        Event::fake();
         $user = parent::createUser();
         ResetPassword::make()->handle($user, 'asdfasdfadsasdf');
+        Event::assertDispatched(ResetPasswordEvent::class, function (ResetPasswordEvent $e) use ($user) {
+            $this->assertEquals($e->user->id, $user->id);
+            return $e->user->id === $user->id;
+        });
     }
 }

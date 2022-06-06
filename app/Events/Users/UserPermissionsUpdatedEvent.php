@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserVerifiedEmailEvent implements ShouldBroadcast
+class UserPermissionsUpdatedEvent implements ShouldBroadcast
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -28,7 +28,7 @@ class UserVerifiedEmailEvent implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'UserVerifiedEmailEvent';
+        return 'UserPermissionsUpdatedEvent';
     }
 
 }

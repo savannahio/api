@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit\Actions\Users;
 
 use App\Actions\Users\VerifyEmail;
-use Illuminate\Auth\Events\Verified;
+use App\Models\Users\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Tests\Unit\UnitTestCase;
@@ -23,9 +23,9 @@ final class VerifyEmailTest extends UnitTestCase
      */
     public function testHandle(): void
     {
-        $this->expectsEvents([Verified::class]);
         $user = parent::createUser();
-        VerifyEmail::make()->handle($user);
+        $user = VerifyEmail::make()->handle($user);
+        $this->assertInstanceOf(User::class, $user);
     }
 
     /**

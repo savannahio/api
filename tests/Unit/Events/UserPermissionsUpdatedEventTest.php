@@ -2,26 +2,27 @@
 
 namespace Tests\Unit\Events;
 
-use App\Actions\Users\VerifyEmail;
-use App\Events\Users\UserRolesUpdatedEvent;
+use App\Actions\Users\SyncUserPermissions;
+use App\Events\Users\UserPermissionsUpdatedEvent;
+use App\Models\ACL\Enum\PermissionEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Unit\UnitTestCase;
 use Event;
 
-class UserRolesUpdatedEventTest extends UnitTestCase
+class UserPermissionsUpdatedEventTest extends UnitTestCase
 {
     use RefreshDatabase;
 
     /**
-     * @covers \App\Events\Users\UserRolesUpdatedEvent
+     * @covers \App\Events\Users\UserPermissionsUpdatedEvent
      */
     public function testEvents(): void
     {
         Event::fake();
         $user = parent::createUser();
-        VerifyEmail::make()->handle($user);
-        Event::assertDispatched(UserRolesUpdatedEvent::class, function (UserRolesUpdatedEvent $e) use ($user) {
-            $this->assertEquals('UserRolesUpdatedEvent', $e->broadcastAs());
+        SyncUserPermissions::make()->handle($user, [PermissionEnum::VIEW_USER_PERMISSIONS->value]);
+        Event::assertDispatched(UserPermissionsUpdatedEvent::class, function (UserPermissionsUpdatedEvent $e) use ($user) {
+            $this->assertEquals('UserPermissionsUpdatedEvent', $e->broadcastAs());
             $this->assertEquals($e->user->id, $user->id);
             $this->assertEquals($e->broadcastOn()->name,  'private-users.'.$user->id);
             return $e->user->id === $user->id;

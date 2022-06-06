@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Users;
 
+use App\Events\Users\UserRolesUpdatedEvent;
 use App\Models\ACL\Enum\RoleEnum;
 use App\Models\ACL\Role;
 use App\Models\Users\User;
@@ -23,7 +24,7 @@ class SyncUserRoles
     public function handle(User $user, array $roles): Collection|array
     {
         $user->syncRoles($roles);
-
+        UserRolesUpdatedEvent::dispatch($user);
         return $user->roles;
     }
 
@@ -40,7 +41,7 @@ class SyncUserRoles
     public function rules(): array
     {
         return [
-            'roles' => 'required|array',
+            'roles' => ['present', 'array'],
             'roles.*' => ['required', 'string', 'distinct', Rule::in(RoleEnum::values())],
         ];
     }

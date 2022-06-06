@@ -23,7 +23,7 @@ final class VerifyEmailTest extends FeatureTestCase
     /**
      * @covers \App\Actions\Users\VerifyEmail::asController
      */
-    public function testSuccess(): void
+    public function testSuccessWithRedirect(): void
     {
         $user = parent::createUser();
         $this->actingAs($user);
@@ -36,6 +36,25 @@ final class VerifyEmailTest extends FeatureTestCase
             ]
         );
         $result = $this->get($uri);
+        $result->assertStatus(302);
+    }
+
+    /**
+     * @covers \App\Actions\Users\VerifyEmail::asController
+     */
+    public function testSuccessJson(): void
+    {
+        $user = parent::createUser();
+        $this->actingAs($user);
+        $uri = URL::temporarySignedroute(
+            'verification.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ]
+        );
+        $result = $this->getJson($uri);
         $result->assertStatus(200);
     }
 

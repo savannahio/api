@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UserPermissionsUpdatedEvent implements ShouldBroadcast
+class UserRolesUpdatedEvent implements ShouldBroadcast
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -28,7 +28,7 @@ class UserPermissionsUpdatedEvent implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'UserPermissionsUpdatedEvent';
+        return 'UserRolesUpdatedEvent';
     }
 
 }
